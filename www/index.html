@@ -2780,14 +2780,30 @@ async function signInWithGoogle() {
     const isNative = !!(Cap && Cap.isNativePlatform && Cap.isNativePlatform());
 
     if (isNative) {
-      // iOS native — use @codetrix-studio/capacitor-google-auth
-      // which handles the URL scheme redirect automatically
+      // iOS native — use @capgo/capacitor-social-login (maintained fork of the
+      // now-abandoned @codetrix-studio/capacitor-google-auth), which handles
+      // the URL scheme redirect automatically
       try {
-        const GoogleAuth = Cap.Plugins && Cap.Plugins.GoogleAuth;
-        if (!GoogleAuth) throw new Error("GoogleAuth plugin not available");
-        const googleUser = await GoogleAuth.signIn();
+        const SocialLogin = Cap.Plugins && Cap.Plugins.SocialLogin;
+        if (!SocialLogin) throw new Error("SocialLogin plugin not available");
+        if (!window._pmSocialLoginInitialized) {
+          await SocialLogin.initialize({
+            google: {
+              webClientId: "925977595706-6otldo50lpm92jb3fsmcvc0no25360r2.apps.googleusercontent.com",
+              iOSClientId: "925977595706-6otldo50lpm92jb3fsmcvc0no25360r2.apps.googleusercontent.com",
+              mode: "online",
+            },
+          });
+          window._pmSocialLoginInitialized = true;
+        }
+        const loginRes = await SocialLogin.login({
+          provider: "google",
+          options: { scopes: ["email", "profile"] },
+        });
+        const idToken = loginRes && loginRes.result ? loginRes.result.idToken : null;
+        if (!idToken) throw new Error("No idToken returned");
         const credential = window._pmGoogleAuthProvider
-          ? window._pmGoogleAuthProvider.credential(googleUser.authentication.idToken)
+          ? window._pmGoogleAuthProvider.credential(idToken)
           : null;
         if (!credential) throw new Error("Provider not ready");
         const result = await window._pmSignInWithPopup(window._pmAuth, credential);
