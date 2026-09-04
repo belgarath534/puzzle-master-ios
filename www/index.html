@@ -1110,28 +1110,76 @@ async function pmHaptic(style = "light") {
 // Audio plays from local folders only
 // const SUPABASE_BASE = "https://ujldmzzsbohmbrdfsuek.supabase.co/storage/v1/object/public/puzzle%20master%20audio/";
 
-function safePlay(path, vol=0.5, loop=false) {
+// ── WEB AUDIO (iOS volume-control fix) ──
+// iOS WKWebView ignores <audio>.volume — it's silently pinned at 1.0. Route
+// music through a Web Audio GainNode instead, since GainNode.gain DOES work
+// on iOS. The <audio> element itself is untouched and keeps driving
+// playback (.play/.pause/.currentTime/.paused all work exactly as before);
+// only where the *volume* comes from changes.
+let _pmAudioCtx = null;
+let _pmMusicGain = null;
+let _pmWebAudioReady = false;
+function pmInitWebAudio() {
+  if (_pmWebAudioReady || (!window.AudioContext && !window.webkitAudioContext)) return;
+  try {
+    _pmAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    _pmMusicGain = _pmAudioCtx.createGain();
+    _pmMusicGain.gain.value = musicVolume;
+    _pmMusicGain.connect(_pmAudioCtx.destination);
+    _pmWebAudioReady = true;
+  } catch(e) { console.warn("[PM Audio] Web Audio init failed:", e); }
+}
+document.addEventListener("click", pmInitWebAudio, { once: true });
+document.addEventListener("touchstart", pmInitWebAudio, { once: true });
+
+// Sets music volume via the GainNode when available (works on iOS); falls
+// back to the element's own .volume otherwise (web/desktop/Android, where
+// that property already works fine).
+function pmSetMusicVolume(v) {
+  musicVolume = v;
+  if (_pmWebAudioReady && _pmAudioCtx && _pmMusicGain) {
+    _pmMusicGain.gain.setValueAtTime(v, _pmAudioCtx.currentTime);
+  } else if (currentMusic) {
+    currentMusic.volume = v;
+  }
+}
+
+function safePlay(path, vol=0.5, loop=false, useGain=false) {
   try {
     const a = new Audio(path);
-    a.volume = vol; a.loop = loop;
+    a.loop = loop;
+    if (useGain && _pmWebAudioReady && _pmAudioCtx && _pmMusicGain) {
+      if (_pmAudioCtx.state === "suspended") _pmAudioCtx.resume();
+      a.volume = 1; // volume now comes from the gain node, not the element
+      try {
+        const src = _pmAudioCtx.createMediaElementSource(a);
+        src.connect(_pmMusicGain);
+      } catch(e) {
+        // createMediaElementSource can fail in some environments — fall back
+        a.volume = vol;
+      }
+    } else {
+      a.volume = vol;
+    }
     const p = a.play();
     if (p && p.catch) p.catch(()=>{});
     return a;
   } catch(e) { return null; }
 }
 
-function safePlayWithFallback(supabasePath, localPath, vol=0.5, loop=false) {
+function safePlayWithFallback(supabasePath, localPath, vol=0.5, loop=false, useGain=false) {
   // All audio plays from local folders
-  return safePlay(localPath, vol, loop);
+  return safePlay(localPath, vol, loop, useGain);
 }
 
 function playMusic(file) {
   try {
+    pmInitWebAudio(); // safe to call repeatedly — no-ops once ready
     if (currentMusic) { currentMusic.pause(); currentMusic = null; }
     if (!musicEnabled || !file) return null;
     const localPath = file.startsWith("music/") ? file : "music/" + file;
     const supabasePath = "music/" + file.replace("music/","");
-    const a = safePlayWithFallback(supabasePath, localPath, musicVolume, true);
+    const a = safePlayWithFallback(supabasePath, localPath, musicVolume, true, true);
     if (a) currentMusic = a;
     return a;
   } catch(e) { return null; }
@@ -1336,7 +1384,7 @@ function loadSettings() {
   if(mv)mv.value=Math.round(musicVolume*100);
   if(vl)vl.textContent=Math.round(musicVolume*100)+"%";
   if(mt)mt.onchange=()=>{musicEnabled=mt.checked;saveSettings();if(!musicEnabled&&currentMusic)currentMusic.pause();if(musicEnabled)applyMusicPack(localStorage.getItem("pmPack")||"default");};
-  if(mv)mv.oninput=()=>{musicVolume=Number(mv.value)/100;if(vl)vl.textContent=mv.value+"%";if(currentMusic)currentMusic.volume=musicVolume;saveSettings();};
+  if(mv)mv.oninput=()=>{pmSetMusicVolume(Number(mv.value)/100);if(vl)vl.textContent=mv.value+"%";saveSettings();};
   const bt=$("bigTextToggle");
   if(bt){bt.checked=localStorage.getItem("pmBigText")==="true";bt.onchange=()=>{localStorage.setItem("pmBigText",bt.checked);document.body.classList.toggle("big-text",bt.checked);};}
   document.body.classList.toggle("big-text",localStorage.getItem("pmBigText")==="true");
