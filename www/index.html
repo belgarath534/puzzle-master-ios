@@ -173,7 +173,7 @@ body.halloween-active #mainMenu h1::after { content: " 🎃"; }
   <!-- Firebase -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-app.js";
-    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
+    import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithCredential, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-auth.js";
     import { getFirestore, doc, setDoc, getDoc, serverTimestamp, collection, query, orderBy, limit, getDocs } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-firestore.js";
     import { getMessaging, getToken, onMessage } from "https://www.gstatic.com/firebasejs/12.16.0/firebase-messaging.js";
 
@@ -213,6 +213,7 @@ body.halloween-active #mainMenu h1::after { content: " 🎃"; }
     window._pmProvider = provider;
     window._pmGoogleAuthProvider = GoogleAuthProvider;
     window._pmSignInWithPopup = signInWithPopup;
+    window._pmSignInWithCredential = signInWithCredential;
     window._pmSignInWithRedirect = signInWithRedirect;
     window._pmGetRedirectResult = getRedirectResult;
     window._pmSignOut = signOut;
@@ -2854,7 +2855,11 @@ async function signInWithGoogle() {
           ? window._pmGoogleAuthProvider.credential(idToken)
           : null;
         if (!credential) throw new Error("Provider not ready");
-        const result = await window._pmSignInWithPopup(window._pmAuth, credential);
+        // Signing in with an already-obtained native credential uses
+        // signInWithCredential, not signInWithPopup (which expects an
+        // AuthProvider to start a *new* browser OAuth flow, not a credential
+        // object — passing one there is what caused auth/argument-error).
+        const result = await window._pmSignInWithCredential(window._pmAuth, credential);
         _currentUser = result.user;
         updateSyncUI();
         await loadFromCloud();
