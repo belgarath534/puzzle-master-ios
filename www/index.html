@@ -2831,6 +2831,27 @@ function _pmWithTimeout(promise, ms, label) {
     new Promise((_, reject) => setTimeout(() => reject(new Error(label + " timed out")), ms)),
   ]);
 }
+// Polls auth.currentUser instead of awaiting signInWithCredential's promise
+// directly, since that promise is known to hang indefinitely in some
+// Capacitor/WKWebView environments even after a successful sign-in.
+function _pmWaitForAuthUser(auth, timeoutMs) {
+  return new Promise((resolve) => {
+    let waited = 0;
+    const interval = 250;
+    const timer = setInterval(() => {
+      if (auth.currentUser) {
+        clearInterval(timer);
+        resolve(auth.currentUser);
+        return;
+      }
+      waited += interval;
+      if (waited >= timeoutMs) {
+        clearInterval(timer);
+        resolve(null);
+      }
+    }, interval);
+  });
+}
 
 async function signInWithGoogle() {
   const statusEl = $("syncStatusText");
@@ -2888,9 +2909,17 @@ async function signInWithGoogle() {
         // signInWithCredential, not signInWithPopup (which expects an
         // AuthProvider to start a *new* browser OAuth flow, not a credential
         // object — passing one there is what caused auth/argument-error).
-        const result = await _pmWithTimeout(window._pmSignInWithCredential(window._pmAuth, credential), 15000, "signInWithCredential");
-        console.log("[PM Cloud] signInWithCredential resolved");
-        _currentUser = result.user;
+        // Known issue: this promise can hang forever in a Capacitor/
+        // WKWebView even though the sign-in actually succeeds server-side —
+        // auth.currentUser still updates. Don't block on the promise; fire
+        // it and poll currentUser instead of trusting the promise to settle.
+        window._pmSignInWithCredential(window._pmAuth, credential).catch((e) => {
+          console.log("[PM Cloud] signInWithCredential promise rejected (may be spurious):", e);
+        });
+        const signedInUser = await _pmWaitForAuthUser(window._pmAuth, 10000);
+        if (!signedInUser) throw new Error("Firebase sign-in did not complete");
+        console.log("[PM Cloud] signInWithCredential succeeded (via currentUser poll)");
+        _currentUser = signedInUser;
         updateSyncUI();
         await loadFromCloud();
         srSay(t("sync_sign_in_success"));
