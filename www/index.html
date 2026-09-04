@@ -2867,7 +2867,14 @@ async function signInWithGoogle() {
         if (statusEl) statusEl.textContent = "Waiting for Google...";
         const loginRes = await _pmWithTimeout(SocialLogin.login({
           provider: "google",
-          options: { scopes: ["email", "profile"] },
+          // forcePrompt skips the plugin's "restore previous sign-in"
+          // shortcut, which can otherwise silently reuse a cached Google
+          // session from a different app installed via the same
+          // personal-team signing identity, handing back a token scoped to
+          // the wrong client/project (surfaced as Firebase
+          // auth/invalid-credential: "audience ... is not authorized to be
+          // used in the project ...").
+          options: { scopes: ["email", "profile"], forcePrompt: true },
         }), 60000, "SocialLogin.login");
         console.log("[PM Cloud] SocialLogin.login resolved:", loginRes);
         const idToken = loginRes && loginRes.result ? loginRes.result.idToken : null;
