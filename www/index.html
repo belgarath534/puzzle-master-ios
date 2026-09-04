@@ -2881,7 +2881,8 @@ async function signInWithGoogle() {
         // signInWithCredential, not signInWithPopup (which expects an
         // AuthProvider to start a *new* browser OAuth flow, not a credential
         // object — passing one there is what caused auth/argument-error).
-        const result = await window._pmSignInWithCredential(window._pmAuth, credential);
+        const result = await _pmWithTimeout(window._pmSignInWithCredential(window._pmAuth, credential), 15000, "signInWithCredential");
+        console.log("[PM Cloud] signInWithCredential resolved");
         _currentUser = result.user;
         updateSyncUI();
         await loadFromCloud();
