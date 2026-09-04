@@ -1,0 +1,12 @@
+{
+  "appId": "com.puzzle.master",
+  "appName": "puzzle master",
+  "webDir": "www",
+  "plugins": {
+    "GoogleAuth": {
+      "scopes": ["profile", "email"],
+      "serverClientId": "925977595706-6otldo50lpm92jb3fsmcvc0no25360r2.apps.googleusercontent.com",
+      "forceCodeForRefreshToken": true
+    }
+  }
+}
