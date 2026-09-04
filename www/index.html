@@ -228,13 +228,14 @@ body.halloween-active #mainMenu h1::after { content: " 🎃"; }
     window._pmGetDocs = getDocs;
   </script>
 
-  <!-- Capacitor Local Notifications (no-op safely on web, active in native iOS/Android builds) -->
-  <script type="module">
+  <!-- Capacitor plugins are injected natively as window.Capacitor by the iOS shell —
+       no CDN fetch needed, and native version always matches the app build. -->
+  <script>
     try {
-      const { LocalNotifications } = await import("https://cdn.jsdelivr.net/npm/@capacitor/local-notifications@6/dist/esm/index.js");
-      const { Capacitor } = await import("https://cdn.jsdelivr.net/npm/@capacitor/core@6/dist/esm/index.js");
-      window._pmLocalNotifications = LocalNotifications;
-      window._pmCapacitor = Capacitor;
+      const Capacitor = window.Capacitor;
+      const Plugins = Capacitor ? Capacitor.Plugins : null;
+      window._pmCapacitor = Capacitor || null;
+      window._pmLocalNotifications = Plugins ? Plugins.LocalNotifications : null;
     } catch(e) {
       // Not bundled in a Capacitor shell (e.g. plain web/PWA) — notifications module simply unavailable
       window._pmLocalNotifications = null;
@@ -243,14 +244,13 @@ body.halloween-active #mainMenu h1::after { content: " 🎃"; }
   </script>
 
   <!-- Capacitor Screen Reader + Haptics (iOS native only, safe no-op on web/Android) -->
-  <script type="module">
+  <script>
     try {
-      const { ScreenReader } = await import("https://cdn.jsdelivr.net/npm/@capacitor/screen-reader@6/dist/esm/index.js");
-      const { Haptics, ImpactStyle, NotificationType } = await import("https://cdn.jsdelivr.net/npm/@capacitor/haptics@6/dist/esm/index.js");
-      window._pmScreenReader = ScreenReader;
-      window._pmHaptics = Haptics;
-      window._pmImpactStyle = ImpactStyle;
-      window._pmNotificationType = NotificationType;
+      const Plugins = window.Capacitor ? window.Capacitor.Plugins : null;
+      window._pmScreenReader = Plugins ? Plugins.ScreenReader : null;
+      window._pmHaptics = Plugins ? Plugins.Haptics : null;
+      window._pmImpactStyle = { Heavy: 'HEAVY', Medium: 'MEDIUM', Light: 'LIGHT' };
+      window._pmNotificationType = { Success: 'SUCCESS', Warning: 'WARNING', Error: 'ERROR' };
     } catch(e) {
       window._pmScreenReader = null;
       window._pmHaptics = null;
@@ -260,13 +260,12 @@ body.halloween-active #mainMenu h1::after { content: " 🎃"; }
   </script>
 
   <!-- Capacitor Status Bar + Preferences (iOS native only, safe no-op on web/Android) -->
-  <script type="module">
+  <script>
     try {
-      const { StatusBar, Style } = await import("https://cdn.jsdelivr.net/npm/@capacitor/status-bar@6/dist/esm/index.js");
-      const { Preferences } = await import("https://cdn.jsdelivr.net/npm/@capacitor/preferences@6/dist/esm/index.js");
-      window._pmStatusBar = StatusBar;
-      window._pmStatusBarStyle = Style;
-      window._pmPreferences = Preferences;
+      const Plugins = window.Capacitor ? window.Capacitor.Plugins : null;
+      window._pmStatusBar = Plugins ? Plugins.StatusBar : null;
+      window._pmStatusBarStyle = { Dark: 'DARK', Light: 'LIGHT', Default: 'DEFAULT' };
+      window._pmPreferences = Plugins ? Plugins.Preferences : null;
     } catch(e) {
       window._pmStatusBar = null;
       window._pmStatusBarStyle = null;
@@ -2678,53 +2677,48 @@ function initAppPlugin() {
   const Cap = window._pmCapacitor;
   if (!Cap || !Cap.isNativePlatform || !Cap.isNativePlatform()) return;
 
-  // Dynamically import App plugin — it's not bridged at module load time
-  // since it's only needed here
-  import("https://cdn.jsdelivr.net/npm/@capacitor/app@6/dist/esm/index.js")
-    .then(({ App }) => {
+  const App = Cap.Plugins && Cap.Plugins.App;
+  if (!App) return; // Not in Capacitor shell — silently ignore
 
-      App.addListener("appStateChange", ({ isActive }) => {
-        if (isActive) {
-          // ── FOREGROUNDED
-          // Resume Blitz timer if a game was in progress
-          if (blitzTimeLeft > 0 && !blitzTimer) {
-            blitzTimer = setInterval(() => {
-              blitzTimeLeft--;
-              updateBlitzHUD();
-              if (blitzTimeLeft <= 0) {
-                clearInterval(blitzTimer);
-                blitzTimer = null;
-                endBlitz("time");
-              }
-            }, 1000);
-          }
-          // Resume music if it was playing before background
-          if (window._pmMusicWasPlaying) {
-            applyMusicPack(localStorage.getItem("pmPack") || "default");
-            window._pmMusicWasPlaying = false;
-          }
-          // Reset comeback notification clocks so they count from NOW,
-          // not from whenever the app was first installed
-          pmScheduleComebackNotifs().catch(() => {});
-
-        } else {
-          // ── BACKGROUNDED
-          // Pause Blitz timer — store remaining time, clear the interval
-          if (blitzTimer) {
+  App.addListener("appStateChange", ({ isActive }) => {
+    if (isActive) {
+      // ── FOREGROUNDED
+      // Resume Blitz timer if a game was in progress
+      if (blitzTimeLeft > 0 && !blitzTimer) {
+        blitzTimer = setInterval(() => {
+          blitzTimeLeft--;
+          updateBlitzHUD();
+          if (blitzTimeLeft <= 0) {
             clearInterval(blitzTimer);
             blitzTimer = null;
-            // blitzTimeLeft is preserved so resume above can pick up exactly where it left off
+            endBlitz("time");
           }
-          // Pause music and remember it was playing
-          if (currentMusic && !currentMusic.paused) {
-            currentMusic.pause();
-            window._pmMusicWasPlaying = true;
-          }
-        }
-      });
+        }, 1000);
+      }
+      // Resume music if it was playing before background
+      if (window._pmMusicWasPlaying) {
+        applyMusicPack(localStorage.getItem("pmPack") || "default");
+        window._pmMusicWasPlaying = false;
+      }
+      // Reset comeback notification clocks so they count from NOW,
+      // not from whenever the app was first installed
+      pmScheduleComebackNotifs().catch(() => {});
 
-    })
-    .catch(() => {}); // Not in Capacitor shell — silently ignore
+    } else {
+      // ── BACKGROUNDED
+      // Pause Blitz timer — store remaining time, clear the interval
+      if (blitzTimer) {
+        clearInterval(blitzTimer);
+        blitzTimer = null;
+        // blitzTimeLeft is preserved so resume above can pick up exactly where it left off
+      }
+      // Pause music and remember it was playing
+      if (currentMusic && !currentMusic.paused) {
+        currentMusic.pause();
+        window._pmMusicWasPlaying = true;
+      }
+    }
+  });
 }
 
 // ── IN-APP PURCHASES — iOS only, stub foundation
@@ -2789,7 +2783,8 @@ async function signInWithGoogle() {
       // iOS native — use @codetrix-studio/capacitor-google-auth
       // which handles the URL scheme redirect automatically
       try {
-        const { GoogleAuth } = await import("https://cdn.jsdelivr.net/npm/@codetrix-studio/capacitor-google-auth@3/dist/esm/index.js");
+        const GoogleAuth = Cap.Plugins && Cap.Plugins.GoogleAuth;
+        if (!GoogleAuth) throw new Error("GoogleAuth plugin not available");
         const googleUser = await GoogleAuth.signIn();
         const credential = window._pmGoogleAuthProvider
           ? window._pmGoogleAuthProvider.credential(googleUser.authentication.idToken)
