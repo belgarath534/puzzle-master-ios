@@ -2823,8 +2823,22 @@ function initCloudSync() {
   });
 }
 
+// Wraps a promise so a hung native call fails loudly instead of leaving the
+// UI looking dead forever with no error and no feedback.
+function _pmWithTimeout(promise, ms, label) {
+  return Promise.race([
+    promise,
+    new Promise((_, reject) => setTimeout(() => reject(new Error(label + " timed out")), ms)),
+  ]);
+}
+
 async function signInWithGoogle() {
+  const statusEl = $("syncStatusText");
+  console.log("[PM Cloud] Google sign-in button tapped");
+  if (statusEl) statusEl.textContent = "Connecting...";
+  let _firebaseReady = false;
   waitForFirebase(async () => {
+    _firebaseReady = true;
     const Cap = window._pmCapacitor;
     const isNative = !!(Cap && Cap.isNativePlatform && Cap.isNativePlatform());
 
@@ -2833,28 +2847,36 @@ async function signInWithGoogle() {
       // now-abandoned @codetrix-studio/capacitor-google-auth), which handles
       // the URL scheme redirect automatically
       try {
+        console.log("[PM Cloud] Google sign-in tapped (native)");
+        if (statusEl) statusEl.textContent = "Starting Google sign-in...";
         const SocialLogin = Cap.Plugins && Cap.Plugins.SocialLogin;
         if (!SocialLogin) throw new Error("SocialLogin plugin not available");
         if (!window._pmSocialLoginInitialized) {
-          await SocialLogin.initialize({
+          console.log("[PM Cloud] Initializing SocialLogin...");
+          if (statusEl) statusEl.textContent = "Initializing sign-in...";
+          await _pmWithTimeout(SocialLogin.initialize({
             google: {
               webClientId: "925977595706-6otldo50lpm92jb3fsmcvc0no25360r2.apps.googleusercontent.com",
               iOSClientId: "925977595706-6otldo50lpm92jb3fsmcvc0no25360r2.apps.googleusercontent.com",
               mode: "online",
             },
-          });
+          }), 15000, "SocialLogin.initialize");
           window._pmSocialLoginInitialized = true;
+          console.log("[PM Cloud] SocialLogin initialized");
         }
-        const loginRes = await SocialLogin.login({
+        if (statusEl) statusEl.textContent = "Waiting for Google...";
+        const loginRes = await _pmWithTimeout(SocialLogin.login({
           provider: "google",
           options: { scopes: ["email", "profile"] },
-        });
+        }), 60000, "SocialLogin.login");
+        console.log("[PM Cloud] SocialLogin.login resolved:", loginRes);
         const idToken = loginRes && loginRes.result ? loginRes.result.idToken : null;
         if (!idToken) throw new Error("No idToken returned");
         const credential = window._pmGoogleAuthProvider
           ? window._pmGoogleAuthProvider.credential(idToken)
           : null;
         if (!credential) throw new Error("Provider not ready");
+        if (statusEl) statusEl.textContent = "Signing into Firebase...";
         // Signing in with an already-obtained native credential uses
         // signInWithCredential, not signInWithPopup (which expects an
         // AuthProvider to start a *new* browser OAuth flow, not a credential
@@ -2866,6 +2888,7 @@ async function signInWithGoogle() {
         srSay(t("sync_sign_in_success"));
       } catch(e) {
         console.log("[PM Cloud] Native Google sign in error:", e);
+        if (statusEl) statusEl.textContent = "Sign-in failed: " + (e.message || "unknown error");
         alert(t("sync_error") + " (" + (e.message || "unknown") + ")");
       }
     } else {
@@ -2893,6 +2916,16 @@ async function signInWithGoogle() {
       }
     }
   });
+  // waitForFirebase gives up silently after ~6s if _pmAuth/_pmDb never got
+  // set — without this, that failure mode looks like a completely dead
+  // button with zero feedback.
+  setTimeout(() => {
+    if (!_firebaseReady) {
+      console.log("[PM Cloud] Firebase never became ready (waitForFirebase timed out)");
+      if (statusEl) statusEl.textContent = "Cloud connection failed. Check your internet connection.";
+      alert(t("sync_error") + " (Firebase not ready)");
+    }
+  }, 6500);
 }
 
 async function signOutGoogle() {
