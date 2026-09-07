@@ -1361,7 +1361,63 @@ const ACH_DATA={
   blitzSurvivor:{nameKey:"ach_blitzSurvivor_name",descKey:"ach_blitzSurvivor_desc"},
   blitzSpeedster:{nameKey:"ach_blitzSpeedster_name",descKey:"ach_blitzSpeedster_desc"},
 };
+// Apple Game Center vendorIdentifier per achievement (App Store Connect)
+const ACH_APPLE_ID={
+  firstPuzzle: 'PM_FIRST_PUZZLE',
+  viewCredits: 'PM_VIEW_CREDITS',
+  openPause: 'PM_OPEN_PAUSE',
+  changeMusic: 'PM_CHANGE_MUSIC',
+  usedHint: 'PM_USED_HINT',
+  solve10: 'PM_SOLVE_10',
+  solve25: 'PM_SOLVE_25',
+  solve50: 'PM_SOLVE_50',
+  solve100: 'PM_SOLVE_100',
+  solve250: 'PM_SOLVE_250',
+  solve500: 'PM_SOLVE_500',
+  streak5: 'PM_STREAK_5',
+  streak10: 'PM_STREAK_10',
+  streak25: 'PM_STREAK_25',
+  completeCat: 'PM_COMPLETE_CAT',
+  complete5cats: 'PM_COMPLETE_5CATS',
+  finishTournament: 'PM_FINISH_TOURNAMENT',
+  visitShop: 'PM_VISIT_SHOP',
+  puzzleMastery: 'PM_PUZZLE_MASTERY',
+  trickOrTreat: 'PM_TRICK_OR_TREAT',
+  ghostHunter: 'PM_GHOST_HUNTER',
+  visitMusicPlayer: 'PM_VISIT_MUSIC_PLAYER',
+  dailyPuzzle: 'PM_DAILY_PUZZLE',
+  rich: 'PM_RICH',
+  loginStreak3: 'PM_LOGIN_STREAK_3',
+  loginStreak7: 'PM_LOGIN_STREAK_7',
+  loginStreak30: 'PM_LOGIN_STREAK_30',
+  blitzFirst: 'PM_BLITZ_FIRST',
+  blitz10: 'PM_BLITZ_10',
+  blitz25: 'PM_BLITZ_25',
+  blitzSurvivor: 'PM_BLITZ_SURVIVOR',
+  blitzSpeedster: 'PM_BLITZ_SPEEDSTER',
+};
+
 function loadAchievements() { try{achievements=JSON.parse(localStorage.getItem("pmAch")||"{}");}catch(e){achievements={};} }
+
+var _pmGameCenterSignedIn = false;
+async function initGameCenter() {
+  try {
+    if (!window.Capacitor || !Capacitor.Plugins) return;
+    if (!window.Capacitor.getPlatform || window.Capacitor.getPlatform() !== 'ios') return;
+    if (_pmGameCenterSignedIn) return;
+    var gcPlugin = Capacitor.Plugins.GameConnect;
+    if (!gcPlugin) {
+      console.warn('[PM] GameConnect plugin not found. Available:', Object.keys(Capacitor.Plugins));
+      return;
+    }
+    await gcPlugin.signIn();
+    _pmGameCenterSignedIn = true;
+    console.log('[PM] Game Center signed in successfully');
+  } catch(e) {
+    console.warn('[PM] Game Center sign in failed:', e);
+  }
+}
+
 function unlockAchievement(id) {
   scheduleSave();
   if(achievements[id])return;
@@ -1370,6 +1426,15 @@ function unlockAchievement(id) {
   sfx("at.mp3");
   pmHaptic("success");
   const ach=ACH_DATA[id]; if(ach)showAchPopup("🎉 "+t(ach.nameKey));
+  // ── Apple Game Center unlock (iOS only — no Android build for this app) ──
+  try {
+    var appleId = ACH_APPLE_ID[id];
+    var gcPlugin = (window.Capacitor && Capacitor.Plugins) ? Capacitor.Plugins.GameConnect : null;
+    if (appleId && gcPlugin && window.Capacitor.getPlatform && window.Capacitor.getPlatform() === 'ios') {
+      gcPlugin.unlockAchievement({ achievementID: appleId })
+        .catch(function(e){ console.warn('[PM] Game Center achievement failed:', e); });
+    }
+  } catch(e) { console.warn('[PM] Game Center achievement error:', e); }
 }
 function showAchPopup(msg) {
   const el=$("achPopup"); if(!el)return;
@@ -3839,6 +3904,7 @@ document.addEventListener("DOMContentLoaded",()=>{
   initLocalNotifications();
   initAppPlugin();
   initBlitzMode();
+  initGameCenter();
 
   const continueBtn=$("continueBtn");
   if(continueBtn){
