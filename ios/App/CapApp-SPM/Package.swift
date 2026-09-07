@@ -19,7 +19,8 @@ let package = Package(
         .package(name: "CapacitorScreenReader", path: "../../../node_modules/@capacitor/screen-reader"),
         .package(name: "CapacitorSplashScreen", path: "../../../node_modules/@capacitor/splash-screen"),
         .package(name: "CapacitorStatusBar", path: "../../../node_modules/@capacitor/status-bar"),
-        .package(name: "CapgoCapacitorSocialLogin", path: "../../../node_modules/@capgo/capacitor-social-login")
+        .package(name: "CapgoCapacitorSocialLogin", path: "../../../node_modules/@capgo/capacitor-social-login"),
+        .package(name: "OsmanraifgunesCapacitorGameConnect", path: "../../../node_modules/@osmanraifgunes/capacitor-game-connect")
     ],
     targets: [
         .target(
@@ -34,7 +35,8 @@ let package = Package(
                 .product(name: "CapacitorScreenReader", package: "CapacitorScreenReader"),
                 .product(name: "CapacitorSplashScreen", package: "CapacitorSplashScreen"),
                 .product(name: "CapacitorStatusBar", package: "CapacitorStatusBar"),
-                .product(name: "CapgoCapacitorSocialLogin", package: "CapgoCapacitorSocialLogin")
+                .product(name: "CapgoCapacitorSocialLogin", package: "CapgoCapacitorSocialLogin"),
+                .product(name: "OsmanraifgunesCapacitorGameConnect", package: "OsmanraifgunesCapacitorGameConnect")
             ]
         )
     ]
