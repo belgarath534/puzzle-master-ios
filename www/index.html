@@ -357,6 +357,7 @@ body.halloween-active #mainMenu h1::after { content: " 🎃"; }
     <div style="max-width:280px;margin:0 auto 6px;"><button class="menu-btn" id="dailyPuzzleBtn" data-i18n="dailypuzzle" data-i18n-aria="dailypuzzle" data-i18n-aria="dailypuzzle" style="display:none;" aria-label="Daily Puzzle">📅 Daily Puzzle</button></div>
     <div style="max-width:280px;margin:0 auto 6px;"><button class="menu-btn" id="tournamentMenuBtn" data-i18n="tournamentmode" data-i18n-aria="tournamentmode" aria-label="Tournament Mode — Timed challenge, opens Saturdays at 7PM" data-desc-key="desc_tournament">🏆 Tournament Mode</button></div>
     <div style="max-width:280px;margin:0 auto 6px;"><button class="menu-btn" id="blitzModeBtn" data-i18n="blitzmode" data-i18n-aria="blitz_menu_aria" data-desc-key="desc_blitz" aria-label="Blitz Mode — Race against the clock, 3 strikes and you're out!">⚡ Blitz Mode</button></div>
+    <div style="max-width:280px;margin:0 auto 6px;"><button class="menu-btn" id="miniGamesBtn" aria-label="Mini Games — Play fun mini games inside Puzzle Master" data-desc-key="desc_minigames">🎲 Mini Games</button></div>
     <div style="max-width:280px;margin:0 auto 6px;"><button class="menu-btn" id="shopBtn" data-i18n="shop" data-i18n-aria="shop" aria-label="Shop — Buy hints, boosts, shields, themes and more" data-desc-key="desc_shop">🛒 Shop</button></div>
     <div style="max-width:280px;margin:0 auto 6px;"><button class="menu-btn" id="achMenuBtn" data-i18n="achievements" data-i18n-aria="achievements" aria-label="Achievements — View your unlocked achievements" data-desc-key="desc_achievements">🎖️ Achievements</button></div>
     <div style="max-width:280px;margin:0 auto 6px;"><button class="menu-btn" id="highScoreBtn" data-i18n="highscore_btn" data-i18n-aria="highscore_btn" aria-label="High Score — See your rank and total progress" data-desc-key="desc_highscore">🏆 High Score</button></div>
@@ -428,6 +429,197 @@ body.halloween-active #mainMenu h1::after { content: " 🎃"; }
   </div>
   <div style="max-width:280px;margin:0 auto;">
     <button id="blitzEndBackBtn" data-i18n="blitz_end_back_btn" data-i18n-aria="blitz_back_aria" style="width:100%;padding:10px;background:transparent;color:#aaa;border:1px solid #333;border-radius:10px;font-size:0.9rem;cursor:pointer;" aria-label="Back to main menu">← Main Menu</button>
+  </div>
+</section>
+
+<!-- MINI GAMES -->
+<!-- ═══════════════════════════════════════════════════════════
+     MINI GAMES HUB
+════════════════════════════════════════════════════════════ -->
+<section id="miniGamesScreen" class="screen" aria-labelledby="miniGamesHeading">
+  <h2 id="miniGamesHeading" style="color:#e94560;margin-bottom:4px;">🎲 Mini Games</h2>
+  <p style="color:#aaa;font-size:0.85rem;margin-bottom:8px;">A growing collection of games. New ones drop with every update!</p>
+  <div style="max-width:340px;margin:0 auto 16px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:center;">
+    <label for="mgMusicSel" style="color:#aaa;font-size:0.8rem;">🎵 Music:</label>
+    <select id="mgMusicSel" aria-label="Mini Games music category" onchange="mgSaveMusic(this.value)"
+      style="background:#1a1a2e;color:#fff;border:1px solid #444;border-radius:8px;padding:6px 10px;font-size:0.8rem;max-width:200px;">
+    </select>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:400px;margin:0 auto 24px;">
+
+    <!-- Escape the Room — LOCKED -->
+    <div role="article" aria-label="Escape the Room — Coming Soon" style="background:#1a1a2e;border:2px solid #444;border-radius:14px;padding:16px;text-align:center;opacity:0.5;">
+      <div style="font-size:2rem;margin-bottom:6px;">🔒</div>
+      <div style="color:#888;font-weight:bold;font-size:0.9rem;margin-bottom:4px;">Escape the Room</div>
+      <div style="background:#444;color:#999;border-radius:20px;padding:3px 10px;font-size:0.7rem;display:inline-block;">Coming Soon</div>
+    </div>
+
+    <!-- Number Crunch -->
+    <button onclick="openMiniGame('numberCrunch')" style="background:#1a1a2e;border:2px solid #f0c040;border-radius:14px;padding:16px;text-align:center;cursor:pointer;width:100%;" aria-label="Number Crunch — Guess the secret number">
+      <div style="font-size:2rem;margin-bottom:6px;">🔢</div>
+      <div style="color:#f0c040;font-weight:bold;font-size:0.9rem;margin-bottom:4px;">Number Crunch</div>
+      <div style="color:#aaa;font-size:0.75rem;">Guess the number!</div>
+    </button>
+
+    <!-- Memory Match -->
+    <button onclick="openMiniGame('memoryMatch')" style="background:#1a1a2e;border:2px solid #4fc3f7;border-radius:14px;padding:16px;text-align:center;cursor:pointer;width:100%;" aria-label="Memory Match — Find all emoji pairs">
+      <div style="font-size:2rem;margin-bottom:6px;">🧠</div>
+      <div style="color:#4fc3f7;font-weight:bold;font-size:0.9rem;margin-bottom:4px;">Memory Match</div>
+      <div style="color:#aaa;font-size:0.75rem;">Find all pairs!</div>
+    </button>
+
+    <!-- Word Scramble -->
+    <button onclick="openMiniGame('wordScramble')" style="background:#1a1a2e;border:2px solid #81c784;border-radius:14px;padding:16px;text-align:center;cursor:pointer;width:100%;" aria-label="Word Scramble — Unscramble the letters">
+      <div style="font-size:2rem;margin-bottom:6px;">🔤</div>
+      <div style="color:#81c784;font-weight:bold;font-size:0.9rem;margin-bottom:4px;">Word Scramble</div>
+      <div style="color:#aaa;font-size:0.75rem;">Unscramble it!</div>
+    </button>
+
+    <!-- True or False Rush -->
+    <button onclick="openMiniGame('trueFalseRush')" style="background:#1a1a2e;border:2px solid #ff8a65;border-radius:14px;padding:16px;text-align:center;cursor:pointer;width:100%;" aria-label="True or False Rush — Answer fast!">
+      <div style="font-size:2rem;margin-bottom:6px;">⚡</div>
+      <div style="color:#ff8a65;font-weight:bold;font-size:0.9rem;margin-bottom:4px;">True or False Rush</div>
+      <div style="color:#aaa;font-size:0.75rem;">Answer fast!</div>
+    </button>
+
+    <!-- Trivia Duel -->
+    <button onclick="openMiniGame('triviaDuel')" style="background:#1a1a2e;border:2px solid #ce93d8;border-radius:14px;padding:16px;text-align:center;cursor:pointer;width:100%;" aria-label="Trivia Duel — Beat the CPU">
+      <div style="font-size:2rem;margin-bottom:6px;">⚔️</div>
+      <div style="color:#ce93d8;font-weight:bold;font-size:0.9rem;margin-bottom:4px;">Trivia Duel</div>
+      <div style="color:#aaa;font-size:0.75rem;">Beat the CPU!</div>
+    </button>
+
+  </div>
+  <div style="max-width:280px;margin:0 auto;">
+    <button id="miniGamesBackBtn" style="width:100%;padding:10px;background:transparent;color:#aaa;border:1px solid #333;border-radius:10px;font-size:0.9rem;cursor:pointer;" aria-label="Back to main menu">← Main Menu</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     NUMBER CRUNCH
+════════════════════════════════════════════════════════════ -->
+<section id="numberCrunchScreen" class="screen" aria-labelledby="ncHeading">
+  <h2 id="ncHeading" style="color:#f0c040;margin-bottom:4px;">🔢 Number Crunch</h2>
+  <p style="color:#aaa;font-size:0.85rem;margin-bottom:4px;">I'm thinking of a number between <span id="ncRangeLabel">1 and 100</span>.</p>
+  <p id="ncAttemptsLeft" style="color:#f0c040;font-size:0.85rem;margin-bottom:16px;" aria-live="polite"></p>
+  <div id="ncFeedback" aria-live="assertive" style="min-height:28px;font-size:1.1rem;font-weight:bold;margin-bottom:12px;color:#fff;"></div>
+  <div id="ncHistory" style="color:#888;font-size:0.8rem;margin-bottom:12px;min-height:20px;" aria-live="polite"></div>
+  <div style="display:flex;gap:8px;justify-content:center;max-width:280px;margin:0 auto 16px;">
+    <input id="ncInput" type="number" min="1" max="100" placeholder="Your guess..." aria-label="Enter your number guess"
+      style="flex:1;padding:12px;border-radius:10px;border:2px solid #f0c040;background:#0f0f1a;color:#fff;font-size:1rem;text-align:center;">
+    <button id="ncGuessBtn" onclick="ncGuess()" style="padding:12px 18px;background:#f0c040;color:#000;border:none;border-radius:10px;font-weight:bold;cursor:pointer;font-size:1rem;" aria-label="Submit guess">Go!</button>
+  </div>
+  <div id="ncDifficultyPicker" style="margin-bottom:16px;">
+    <p style="color:#aaa;font-size:0.85rem;margin-bottom:8px;">Difficulty:</p>
+    <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+      <button onclick="ncSetDifficulty('easy')" id="ncEasyBtn" style="padding:8px 16px;border-radius:8px;border:2px solid #81c784;background:transparent;color:#81c784;cursor:pointer;font-size:0.85rem;">Easy (1–50, 10 tries)</button>
+      <button onclick="ncSetDifficulty('medium')" id="ncMedBtn" style="padding:8px 16px;border-radius:8px;border:2px solid #f0c040;background:#f0c040;color:#000;cursor:pointer;font-size:0.85rem;">Medium (1–100, 7 tries)</button>
+      <button onclick="ncSetDifficulty('hard')" id="ncHardBtn" style="padding:8px 16px;border-radius:8px;border:2px solid #e94560;background:transparent;color:#e94560;cursor:pointer;font-size:0.85rem;">Hard (1–200, 5 tries)</button>
+    </div>
+  </div>
+  <div style="max-width:280px;margin:0 auto;display:flex;gap:8px;">
+    <button onclick="ncNewGame()" style="flex:1;padding:10px;background:#333;color:#fff;border:none;border-radius:10px;cursor:pointer;">🔄 New Game</button>
+    <button onclick="showScreen('miniGamesScreen')" style="flex:1;padding:10px;background:transparent;color:#aaa;border:1px solid #333;border-radius:10px;cursor:pointer;">← Back</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     MEMORY MATCH
+════════════════════════════════════════════════════════════ -->
+<section id="memoryMatchScreen" class="screen" aria-labelledby="mmHeading">
+  <h2 id="mmHeading" style="color:#4fc3f7;margin-bottom:4px;">🧠 Memory Match</h2>
+  <div style="display:flex;justify-content:center;gap:20px;margin-bottom:12px;font-size:0.85rem;">
+    <span style="color:#aaa;">Pairs: <span id="mmPairsFound" style="color:#4fc3f7;font-weight:bold;">0</span>/<span id="mmTotalPairs">8</span></span>
+    <span style="color:#aaa;">Moves: <span id="mmMoves" style="color:#f0c040;font-weight:bold;">0</span></span>
+    <span style="color:#aaa;">Time: <span id="mmTimer" style="color:#81c784;font-weight:bold;">0s</span></span>
+  </div>
+  <div id="mmStatus" aria-live="assertive" style="min-height:24px;color:#fff;font-size:0.9rem;margin-bottom:10px;"></div>
+  <div id="mmGrid" role="grid" aria-label="Memory match card grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:340px;margin:0 auto 16px;"></div>
+  <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;">
+    <button onclick="mmSetSize(8)" id="mm8btn" style="padding:6px 14px;border-radius:8px;border:2px solid #4fc3f7;background:#4fc3f7;color:#000;cursor:pointer;font-size:0.8rem;">4×4 (8 pairs)</button>
+    <button onclick="mmSetSize(6)" id="mm6btn" style="padding:6px 14px;border-radius:8px;border:2px solid #4fc3f7;background:transparent;color:#4fc3f7;cursor:pointer;font-size:0.8rem;">3×4 (6 pairs)</button>
+  </div>
+  <div style="max-width:280px;margin:0 auto;display:flex;gap:8px;">
+    <button onclick="mmNewGame()" style="flex:1;padding:10px;background:#333;color:#fff;border:none;border-radius:10px;cursor:pointer;">🔄 New Game</button>
+    <button onclick="showScreen('miniGamesScreen')" style="flex:1;padding:10px;background:transparent;color:#aaa;border:1px solid #333;border-radius:10px;cursor:pointer;">← Back</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     WORD SCRAMBLE
+════════════════════════════════════════════════════════════ -->
+<section id="wordScrambleScreen" class="screen" aria-labelledby="wsHeading">
+  <h2 id="wsHeading" style="color:#81c784;margin-bottom:4px;">🔤 Word Scramble</h2>
+  <p style="color:#aaa;font-size:0.8rem;margin-bottom:4px;">Word <span id="wsWordNum">1</span> of <span id="wsWordTotal">10</span> &nbsp;|&nbsp; Score: <span id="wsScore" style="color:#81c784;font-weight:bold;">0</span></p>
+  <p style="color:#aaa;font-size:0.75rem;margin-bottom:12px;">Streak: <span id="wsStreak" style="color:#f0c040;">0</span> 🔥</p>
+  <div id="wsHintText" style="color:#888;font-size:0.8rem;min-height:18px;margin-bottom:6px;"></div>
+  <div id="wsScrambled" aria-live="polite" style="font-size:2rem;font-weight:bold;letter-spacing:6px;color:#f0c040;margin-bottom:16px;word-break:break-all;"></div>
+  <div style="display:flex;gap:8px;justify-content:center;max-width:320px;margin:0 auto 12px;">
+    <input id="wsInput" type="text" placeholder="Your answer..." aria-label="Type your unscrambled word"
+      style="flex:1;padding:12px;border-radius:10px;border:2px solid #81c784;background:#0f0f1a;color:#fff;font-size:1rem;text-align:center;">
+    <button onclick="wsSubmit()" style="padding:12px 18px;background:#81c784;color:#000;border:none;border-radius:10px;font-weight:bold;cursor:pointer;">Go!</button>
+  </div>
+  <div id="wsFeedback" aria-live="assertive" style="min-height:24px;font-size:1rem;font-weight:bold;margin-bottom:12px;color:#fff;"></div>
+  <div style="display:flex;gap:8px;justify-content:center;max-width:280px;margin:0 auto 16px;">
+    <button onclick="wsSkip()" style="flex:1;padding:8px;background:transparent;color:#888;border:1px solid #444;border-radius:10px;cursor:pointer;font-size:0.85rem;">Skip ⏭</button>
+    <button onclick="wsHint()" style="flex:1;padding:8px;background:transparent;color:#f0c040;border:1px solid #f0c040;border-radius:10px;cursor:pointer;font-size:0.85rem;">Hint 💡</button>
+  </div>
+  <div style="max-width:280px;margin:0 auto;display:flex;gap:8px;">
+    <button onclick="wsNewGame()" style="flex:1;padding:10px;background:#333;color:#fff;border:none;border-radius:10px;cursor:pointer;">🔄 New Game</button>
+    <button onclick="showScreen('miniGamesScreen')" style="flex:1;padding:10px;background:transparent;color:#aaa;border:1px solid #333;border-radius:10px;cursor:pointer;">← Back</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TRUE OR FALSE RUSH
+════════════════════════════════════════════════════════════ -->
+<section id="trueFalseScreen" class="screen" aria-labelledby="tfHeading">
+  <h2 id="tfHeading" style="color:#ff8a65;margin-bottom:4px;">⚡ True or False Rush</h2>
+  <div style="display:flex;justify-content:center;gap:20px;margin-bottom:8px;font-size:0.85rem;">
+    <span style="color:#aaa;">Score: <span id="tfScore" style="color:#ff8a65;font-weight:bold;">0</span></span>
+    <span style="color:#aaa;">Streak: <span id="tfStreak" style="color:#f0c040;font-weight:bold;">0</span>🔥</span>
+  </div>
+  <div id="tfTimerBar" style="height:8px;background:#333;border-radius:4px;max-width:320px;margin:0 auto 12px;overflow:hidden;">
+    <div id="tfTimerFill" style="height:100%;background:#ff8a65;width:100%;transition:width 0.1s linear;border-radius:4px;"></div>
+  </div>
+  <div id="tfQuestion" aria-live="polite" style="font-size:1.05rem;color:#fff;min-height:60px;margin-bottom:16px;max-width:340px;margin-left:auto;margin-right:auto;line-height:1.5;"></div>
+  <div id="tfFeedback" aria-live="assertive" style="min-height:24px;font-size:1rem;font-weight:bold;margin-bottom:12px;color:#fff;"></div>
+  <div style="display:flex;gap:12px;justify-content:center;max-width:300px;margin:0 auto 20px;">
+    <button onclick="tfAnswer(true)" id="tfTrueBtn" style="flex:1;padding:18px;background:#4CAF50;color:#fff;border:none;border-radius:14px;font-size:1.1rem;font-weight:bold;cursor:pointer;" aria-label="True">✅ True</button>
+    <button onclick="tfAnswer(false)" id="tfFalseBtn" style="flex:1;padding:18px;background:#e94560;color:#fff;border:none;border-radius:14px;font-size:1.1rem;font-weight:bold;cursor:pointer;" aria-label="False">❌ False</button>
+  </div>
+  <p id="tfQCount" style="color:#888;font-size:0.8rem;margin-bottom:16px;" aria-live="polite"></p>
+  <div style="max-width:280px;margin:0 auto;display:flex;gap:8px;">
+    <button onclick="tfNewGame()" style="flex:1;padding:10px;background:#333;color:#fff;border:none;border-radius:10px;cursor:pointer;">🔄 New Game</button>
+    <button onclick="showScreen('miniGamesScreen')" style="flex:1;padding:10px;background:transparent;color:#aaa;border:1px solid #333;border-radius:10px;cursor:pointer;">← Back</button>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════
+     TRIVIA DUEL
+════════════════════════════════════════════════════════════ -->
+<section id="triviaDuelScreen" class="screen" aria-labelledby="tdHeading">
+  <h2 id="tdHeading" style="color:#ce93d8;margin-bottom:4px;">⚔️ Trivia Duel</h2>
+  <div style="display:flex;justify-content:space-around;max-width:320px;margin:0 auto 12px;">
+    <div style="text-align:center;">
+      <div style="color:#4fc3f7;font-size:0.8rem;">YOU</div>
+      <div id="tdPlayerScore" style="font-size:2rem;font-weight:bold;color:#4fc3f7;">0</div>
+    </div>
+    <div style="text-align:center;align-self:center;">
+      <div style="color:#888;font-size:1.2rem;">VS</div>
+    </div>
+    <div style="text-align:center;">
+      <div style="color:#e94560;font-size:0.8rem;">CPU</div>
+      <div id="tdCPUScore" style="font-size:2rem;font-weight:bold;color:#e94560;">0</div>
+    </div>
+  </div>
+  <p id="tdRoundLabel" style="color:#888;font-size:0.8rem;margin-bottom:8px;" aria-live="polite"></p>
+  <div id="tdStatus" aria-live="assertive" style="min-height:24px;font-size:0.95rem;font-weight:bold;margin-bottom:8px;color:#fff;"></div>
+  <div id="tdQuestion" style="font-size:1rem;color:#fff;min-height:50px;max-width:340px;margin:0 auto 14px;line-height:1.5;"></div>
+  <div id="tdChoices" style="max-width:340px;margin:0 auto 16px;display:flex;flex-direction:column;gap:8px;"></div>
+  <div style="max-width:280px;margin:0 auto;display:flex;gap:8px;">
+    <button onclick="tdNewGame()" style="flex:1;padding:10px;background:#333;color:#fff;border:none;border-radius:10px;cursor:pointer;">🔄 New Game</button>
+    <button onclick="showScreen('miniGamesScreen')" style="flex:1;padding:10px;background:transparent;color:#aaa;border:1px solid #333;border-radius:10px;cursor:pointer;">← Back</button>
   </div>
 </section>
 
@@ -1277,7 +1469,8 @@ const ALL_SCREENS = ["mainMenu","categoryMenu","puzzleMenu","questionArea",
   "dailyPuzzleScreen","settingsMenu","pauseMenu","achievementsScreen",
   "creditsScreen","aboutScreen","helpScreen","shopScreen","moreGamesScreen",
   "versionsScreen","tournamentScreen","musicPlayerScreen","highScoreScreen","leaderboardScreen",
-  "blitzSetup","blitzGame","blitzEnd"];
+  "blitzSetup","blitzGame","blitzEnd","miniGamesScreen",
+  "numberCrunchScreen","memoryMatchScreen","wordScrambleScreen","trueFalseScreen","triviaDuelScreen"];
 
 function showScreen(id, announce=true) {
   ALL_SCREENS.forEach(s=>{ const el=$(s); if(el){el.classList.remove("active");el.style.display="none";} });
@@ -2199,6 +2392,8 @@ function wireButtons() {
   $("tournamentMenuBtn").onclick=openTournament;
   $("shopBtn").onclick=()=>{updateCoinDisplay();playMusic("music/shop.mp3");unlockAchievement("visitShop");renderThemeShop();updateBoostStatus();updateIAPVisibility();updateSubscriptionUI();initHalloween();showScreen("shopScreen");};
   $("achMenuBtn").onclick=showAchievements;
+  $("miniGamesBtn").onclick=()=>{ mgInitMusicPicker(); showScreen("miniGamesScreen"); };
+  $("miniGamesBackBtn").onclick=()=>showScreen("mainMenu");
   $("creditsBtn").onclick=openCredits;
   $("aboutBtn").onclick=()=>{playMusic("music/about_music.mp3");showScreen("aboutScreen");};
   $("moreGamesBtn").onclick=()=>{playMusic("music/more games.mp3");showScreen("moreGamesScreen");};
@@ -3975,6 +4170,667 @@ document.addEventListener("DOMContentLoaded",()=>{
 
 if("serviceWorker" in navigator){
   navigator.serviceWorker.register("service-worker.js").catch(()=>{});
+}
+
+// ══════════════════════════════════════════════════════════════
+// MINI GAMES ENGINE
+// ══════════════════════════════════════════════════════════════
+
+function mgSaveMusic(val) {
+  localStorage.setItem("pmMiniGameMusic", val);
+}
+
+function mgGetMusicFile() {
+  var saved = localStorage.getItem("pmMiniGameMusic") || "1";
+  return "music/category" + saved + ".mp3";
+}
+
+function mgInitMusicPicker() {
+  var sel = document.getElementById("mgMusicSel");
+  if (!sel) return;
+  sel.innerHTML = "";
+  // Build from MUSIC_TRACKS which already contains all category tracks
+  if (typeof MUSIC_TRACKS !== "undefined") {
+    MUSIC_TRACKS.forEach(function(t) {
+      if (t.file && t.file.indexOf("category") !== -1) {
+        var opt = document.createElement("option");
+        opt.value = t.file.replace("music/category","").replace(".mp3","");
+        opt.textContent = t.name;
+        sel.appendChild(opt);
+      }
+    });
+  }
+  // Also add a "Current" option at top
+  var optCur = document.createElement("option");
+  optCur.value = "__current__";
+  optCur.textContent = "Keep current music";
+  sel.insertBefore(optCur, sel.firstChild);
+
+  var saved = localStorage.getItem("pmMiniGameMusic") || "__current__";
+  sel.value = saved;
+  if (!sel.value) sel.value = "__current__";
+}
+
+function openMiniGame(id) {
+  var screenMap = {
+    numberCrunch: "numberCrunchScreen",
+    memoryMatch:  "memoryMatchScreen",
+    wordScramble: "wordScrambleScreen",
+    trueFalseRush:"trueFalseScreen",
+    triviaDuel:   "triviaDuelScreen"
+  };
+  var initMap = {
+    numberCrunch: ncNewGame,
+    memoryMatch:  mmNewGame,
+    wordScramble: wsNewGame,
+    trueFalseRush:tfNewGame,
+    triviaDuel:   tdNewGame
+  };
+  // Play selected mini game music
+  var musicSel = localStorage.getItem("pmMiniGameMusic") || "__current__";
+  if (musicSel !== "__current__" && musicSel) {
+    playMusic("music/category" + musicSel + ".mp3");
+  }
+  showScreen(screenMap[id]);
+  if (initMap[id]) initMap[id]();
+}
+
+// ── NUMBER CRUNCH ─────────────────────────────────────────────
+var _nc = { secret:0, max:100, attempts:0, maxAttempts:7, over:false, difficulty:"medium" };
+
+function ncSetDifficulty(d) {
+  _nc.difficulty = d;
+  var cfg = { easy:{max:50,tries:10}, medium:{max:100,tries:7}, hard:{max:200,tries:5} }[d];
+  _nc.max = cfg.max; _nc.maxAttempts = cfg.tries;
+  ["Easy","Med","Hard"].forEach(function(n){ var b=$("nc"+n+"Btn"); if(b) b.style.background="transparent"; });
+  var active = d==="easy"?"ncEasyBtn":d==="medium"?"ncMedBtn":"ncHardBtn";
+  var colors = {ncEasyBtn:"#81c784",ncMedBtn:"#f0c040",ncHardBtn:"#e94560"};
+  var ab = $(active); if(ab){ ab.style.background=colors[active]; ab.style.color=d==="medium"?"#000":"#000"; }
+  ncNewGame();
+}
+
+function ncNewGame() {
+  _nc.secret = Math.floor(Math.random()*_nc.max)+1;
+  _nc.attempts = 0; _nc.over = false;
+  $("ncRangeLabel").textContent = "1 and "+_nc.max;
+  $("ncAttemptsLeft").textContent = _nc.maxAttempts+" attempts remaining";
+  $("ncFeedback").textContent = "";
+  $("ncHistory").textContent = "";
+  var inp = $("ncInput"); if(inp){ inp.value=""; inp.disabled=false; inp.focus(); }
+  var btn = $("ncGuessBtn"); if(btn) btn.disabled=false;
+}
+
+function ncGuess() {
+  if (_nc.over) return;
+  var inp = $("ncInput");
+  var g = parseInt(inp.value);
+  if (isNaN(g) || g<1 || g>_nc.max) {
+    $("ncFeedback").textContent = "⚠️ Enter a number between 1 and "+_nc.max;
+    return;
+  }
+  _nc.attempts++;
+  var left = _nc.maxAttempts - _nc.attempts;
+  var hist = $("ncHistory");
+  hist.textContent = (hist.textContent ? hist.textContent+", " : "Guesses: ") + g;
+
+  if (g === _nc.secret) {
+    _nc.over = true;
+    $("ncFeedback").textContent = "🎉 Correct! You got it in "+_nc.attempts+" "+(+_nc.attempts===1?"try":"tries")+"!";
+    $("ncAttemptsLeft").textContent = "";
+    addCoins(Math.max(1, _nc.maxAttempts - _nc.attempts + 1));
+    inp.disabled=true; $("ncGuessBtn").disabled=true;
+  } else if (left <= 0) {
+    _nc.over = true;
+    $("ncFeedback").textContent = "💀 Out of attempts! The number was "+_nc.secret+".";
+    $("ncAttemptsLeft").textContent = "";
+    inp.disabled=true; $("ncGuessBtn").disabled=true;
+  } else {
+    var hint = g < _nc.secret ? "📈 Too low!" : "📉 Too high!";
+    if (Math.abs(g - _nc.secret) <= 5) hint += " (Very close!)";
+    else if (Math.abs(g - _nc.secret) <= 15) hint += " (Getting warm...)";
+    $("ncFeedback").textContent = hint;
+    $("ncAttemptsLeft").textContent = left+" attempt"+(left===1?"":"s")+" remaining";
+    inp.value=""; inp.focus();
+  }
+}
+
+// ── MEMORY MATCH ──────────────────────────────────────────────
+var _mm = { cards:[], flipped:[], matched:0, total:8, moves:0, timer:null, seconds:0, locked:false };
+
+var MM_EMOJIS = ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐸",
+  "🐙","🦋","🐝","🌸","🌈","⭐","🍕","🎸","🚀","💎","🏆","🎯"];
+
+function mmSetSize(n) {
+  _mm.total = n;
+  $("mm8btn").style.background = n===8 ? "#4fc3f7" : "transparent";
+  $("mm8btn").style.color = n===8 ? "#000" : "#4fc3f7";
+  $("mm6btn").style.background = n===6 ? "#4fc3f7" : "transparent";
+  $("mm6btn").style.color = n===6 ? "#000" : "#4fc3f7";
+  mmNewGame();
+}
+
+function mmNewGame() {
+  clearInterval(_mm.timer);
+  _mm.matched=0; _mm.moves=0; _mm.seconds=0; _mm.flipped=[]; _mm.locked=false;
+  $("mmPairsFound").textContent="0";
+  $("mmTotalPairs").textContent=_mm.total;
+  $("mmMoves").textContent="0";
+  $("mmTimer").textContent="0s";
+  $("mmStatus").textContent="";
+
+  var pool = MM_EMOJIS.slice(0,_mm.total);
+  var deck = pool.concat(pool).sort(function(){ return Math.random()-0.5; });
+  _mm.cards = deck.map(function(e,i){ return {id:i,emoji:e,flipped:false,matched:false}; });
+
+  var cols = _mm.total===8 ? 4 : 4;
+  var grid = $("mmGrid");
+  grid.style.gridTemplateColumns = "repeat("+cols+",1fr)";
+  grid.innerHTML="";
+  _mm.cards.forEach(function(c) {
+    var btn = document.createElement("button");
+    btn.setAttribute("role","gridcell");
+    btn.setAttribute("aria-label","Card "+(c.id+1)+", face down");
+    btn.setAttribute("aria-pressed","false");
+    btn.style.cssText="height:70px;border-radius:10px;border:2px solid #333;background:#1a1a2e;font-size:1.8rem;cursor:pointer;transition:all 0.2s;";
+    btn.textContent="❓";
+    btn.onclick = function(){ mmFlip(c.id); };
+    btn.id="mmCard"+c.id;
+    grid.appendChild(btn);
+  });
+
+  _mm.timer = setInterval(function(){
+    _mm.seconds++;
+    $("mmTimer").textContent=_mm.seconds+"s";
+  },1000);
+}
+
+function mmFlip(idx) {
+  if (_mm.locked) return;
+  var c = _mm.cards[idx];
+  if (c.flipped || c.matched) return;
+  c.flipped=true;
+  var btn=$("mmCard"+idx);
+  btn.textContent=c.emoji;
+  btn.style.background="#0a2a4a";
+  btn.style.borderColor="#4fc3f7";
+  btn.setAttribute("aria-label","Card "+(idx+1)+", "+c.emoji);
+  btn.setAttribute("aria-pressed","true");
+  _mm.flipped.push(idx);
+
+  if (_mm.flipped.length===2) {
+    _mm.locked=true; _mm.moves++;
+    $("mmMoves").textContent=_mm.moves;
+    var a=_mm.cards[_mm.flipped[0]], b=_mm.cards[_mm.flipped[1]];
+    if (a.emoji===b.emoji) {
+      a.matched=b.matched=true;
+      [$("mmCard"+_mm.flipped[0]),$("mmCard"+_mm.flipped[1])].forEach(function(el){
+        el.style.background="#1a3a1a"; el.style.borderColor="#81c784";
+      });
+      _mm.matched++; $("mmPairsFound").textContent=_mm.matched;
+      $("mmStatus").textContent="✅ Match! "+c.emoji;
+      _mm.flipped=[]; _mm.locked=false;
+      if (_mm.matched===_mm.total) {
+        clearInterval(_mm.timer);
+        $("mmStatus").textContent="🎉 All pairs found in "+_mm.moves+" moves and "+_mm.seconds+"s!";
+        addCoins(Math.max(3, 20-Math.floor(_mm.moves/2)));
+      }
+    } else {
+      $("mmStatus").textContent="❌ No match";
+      setTimeout(function(){
+        [_mm.flipped[0],_mm.flipped[1]].forEach(function(i){
+          _mm.cards[i].flipped=false;
+          var el=$("mmCard"+i);
+          el.textContent="❓"; el.style.background="#1a1a2e"; el.style.borderColor="#333";
+          el.setAttribute("aria-label","Card "+(i+1)+", face down");
+          el.setAttribute("aria-pressed","false");
+        });
+        _mm.flipped=[]; _mm.locked=false; $("mmStatus").textContent="";
+      },900);
+    }
+  }
+}
+
+// ── WORD SCRAMBLE ─────────────────────────────────────────────
+var WS_WORDS = [
+  {w:"PYTHON",h:"A programming language"},
+  {w:"GUITAR",h:"A stringed instrument"},
+  {w:"OCEAN",h:"A large body of water"},
+  {w:"PLANET",h:"Orbits a star"},
+  {w:"CASTLE",h:"A medieval fortress"},
+  {w:"JUNGLE",h:"A dense tropical forest"},
+  {w:"ROCKET",h:"Goes to space"},
+  {w:"BRIDGE",h:"Crosses water or gaps"},
+  {w:"CANDLE",h:"Gives off light and wax"},
+  {w:"DRAGON",h:"A mythical fire-breather"},
+  {w:"EMPIRE",h:"A large realm ruled by one"},
+  {w:"FOSSIL",h:"Ancient remains in rock"},
+  {w:"GALAXY",h:"Contains billions of stars"},
+  {w:"HARBOR",h:"A safe port for ships"},
+  {w:"ISLAND",h:"Land surrounded by water"},
+  {w:"JUNGLE",h:"Wild tropical terrain"},
+  {w:"KNIGHT",h:"A medieval warrior on horseback"},
+  {w:"LAVA",h:"Molten rock from a volcano"},
+  {w:"MAGNET",h:"Attracts iron and steel"},
+  {w:"NEEDLE",h:"Used for sewing"},
+  {w:"ORPHAN",h:"A child without parents"},
+  {w:"PARROT",h:"A colorful talking bird"},
+  {w:"QUARTZ",h:"A common crystal mineral"},
+  {w:"RAVEN",h:"A large black bird"},
+  {w:"SPIDER",h:"Eight legs, spins webs"},
+  {w:"THRONE",h:"A royal seat of power"},
+  {w:"UMBRELLA",h:"Keeps off rain"},
+  {w:"VULTURE",h:"A scavenging bird"},
+  {w:"WALRUS",h:"A large tusked sea mammal"},
+  {w:"XENON",h:"A noble gas element"},
+  {w:"YOGURT",h:"A dairy product"},
+  {w:"ZEBRA",h:"Black and white striped animal"},
+  {w:"ANCHOR",h:"Keeps a ship in place"},
+  {w:"BEACON",h:"A guiding signal or light"},
+  {w:"CACTUS",h:"A desert plant with spines"},
+  {w:"DAGGER",h:"A short stabbing blade"},
+  {w:"ECLIPSE",h:"When one body blocks another's light"},
+  {w:"FALCON",h:"A fast hunting bird"},
+  {w:"GOBLIN",h:"A mischievous fantasy creature"},
+  {w:"HAMMER",h:"Used to drive nails"},
+  {w:"ICEBERG",h:"Most of it is underwater"},
+  {w:"JASMINE",h:"A fragrant flower"},
+  {w:"KETTLE",h:"Used to boil water"},
+  {w:"LANTERN",h:"A portable light"},
+  {w:"MITTEN",h:"Keeps your hand warm"},
+  {w:"NOODLE",h:"A pasta ingredient"},
+  {w:"OTTER",h:"A playful water mammal"},
+  {w:"PENGUIN",h:"A flightless Antarctic bird"},
+  {w:"QUILL",h:"An old-fashioned writing tool"},
+  {w:"RIDDLE",h:"A puzzle in word form"},
+  {w:"SADDLE",h:"Sits on a horse's back"},
+  {w:"TUNDRA",h:"A cold treeless biome"},
+  {w:"UNICORN",h:"A mythical horned horse"},
+  {w:"VAMPIRE",h:"Drinks blood, hates sunlight"},
+  {w:"WIZARD",h:"A magic user"},
+  {w:"XYLOPHONE",h:"A percussion instrument with bars"},
+  {w:"YACHT",h:"A luxury sailing boat"},
+  {w:"ZOMBIE",h:"An undead creature"},
+  {w:"ARMOR",h:"Protective battle gear"},
+  {w:"BLIZZARD",h:"A severe snowstorm"},
+  {w:"CRYSTAL",h:"A naturally formed geometric mineral"},
+  {w:"DUNGEON",h:"An underground prison"},
+  {w:"EMPEROR",h:"Ruler of an empire"},
+  {w:"FORTRESS",h:"A heavily defended building"},
+  {w:"GLACIER",h:"A slow-moving river of ice"},
+  {w:"HORIZON",h:"Where sky meets earth"},
+  {w:"INFERNO",h:"An intense fire"},
+  {w:"JAVELIN",h:"A thrown spear in athletics"},
+  {w:"KELP",h:"Giant ocean seaweed"},
+  {w:"LABYRINTH",h:"A complex maze"},
+  {w:"MERMAID",h:"Half human, half fish"},
+  {w:"NEBULA",h:"A cloud of gas in space"},
+  {w:"OBELISK",h:"A tall four-sided monument"},
+  {w:"PHANTOM",h:"A ghost or apparition"},
+  {w:"QUICKSAND",h:"Traps things that step in it"},
+  {w:"RAINBOW",h:"Appears after rain in sunlight"},
+  {w:"SERPENT",h:"Another word for snake"},
+  {w:"TSUNAMI",h:"A giant ocean wave"},
+  {w:"UNIVERSE",h:"Everything that exists"},
+  {w:"VORTEX",h:"A spinning whirlpool of force"},
+  {w:"WARDEN",h:"A prison guard or keeper"},
+  {w:"ZEPPELIN",h:"A type of airship"},
+  {w:"ABYSS",h:"An immeasurably deep pit"},
+  {w:"BANDIT",h:"An outlaw or robber"},
+  {w:"COMET",h:"A space rock with a tail"},
+  {w:"DIAMOND",h:"The hardest natural substance"},
+  {w:"EMERALD",h:"A green precious gem"},
+  {w:"FAMINE",h:"A severe food shortage"},
+  {w:"GNOME",h:"A small mythical earth-dweller"},
+  {w:"HYDRA",h:"A multi-headed mythical serpent"},
+  {w:"IVY",h:"A climbing plant"},
+  {w:"JADE",h:"A green ornamental stone"},
+  {w:"KRAKEN",h:"A legendary sea monster"},
+  {w:"LOTUS",h:"A sacred water flower"},
+  {w:"MIRAGE",h:"An optical illusion in the desert"},
+  {w:"NOMAD",h:"A person with no fixed home"},
+  {w:"ORACLE",h:"A prophet who tells the future"},
+  {w:"PRISM",h:"Splits light into a spectrum"},
+  {w:"QUASAR",h:"An extremely bright galactic core"},
+  {w:"RELIC",h:"An ancient historical artifact"},
+  {w:"SUMMIT",h:"The highest point of a mountain"}
+];
+
+var _ws = { pool:[], current:0, total:10, score:0, streak:0, hintUsed:false, over:false };
+
+function wsScramble(word) {
+  var a = word.split(""), n = a.length;
+  for (var i=n-1;i>0;i--){ var j=Math.floor(Math.random()*(i+1)); var t=a[i];a[i]=a[j];a[j]=t; }
+  var s = a.join("");
+  return s===word && word.length>1 ? wsScramble(word) : s;
+}
+
+function wsNewGame() {
+  var shuffled = WS_WORDS.slice().sort(function(){ return Math.random()-0.5; });
+  _ws.pool = shuffled.slice(0,_ws.total);
+  _ws.current=0; _ws.score=0; _ws.streak=0; _ws.over=false;
+  wsLoadWord();
+}
+
+function wsLoadWord() {
+  if (_ws.current >= _ws.pool.length) { wsEnd(); return; }
+  _ws.hintUsed=false;
+  var entry = _ws.pool[_ws.current];
+  $("wsWordNum").textContent = _ws.current+1;
+  $("wsWordTotal").textContent = _ws.pool.length;
+  $("wsScore").textContent = _ws.score;
+  $("wsStreak").textContent = _ws.streak;
+  $("wsScrambled").textContent = wsScramble(entry.w);
+  $("wsFeedback").textContent = "";
+  $("wsHintText").textContent = "";
+  var inp=$("wsInput"); if(inp){ inp.value=""; inp.focus(); }
+}
+
+function wsSubmit() {
+  if (_ws.over) return;
+  var inp=$("wsInput");
+  var ans = inp.value.trim().toUpperCase();
+  var correct = _ws.pool[_ws.current].w;
+  if (!ans) return;
+  if (ans===correct) {
+    _ws.score += _ws.hintUsed ? 1 : 2;
+    _ws.streak++;
+    $("wsFeedback").style.color="#81c784";
+    $("wsFeedback").textContent="✅ Correct! +"+ (_ws.hintUsed?1:2)+" pts";
+    _ws.current++;
+    setTimeout(wsLoadWord,900);
+  } else {
+    _ws.streak=0;
+    $("wsFeedback").style.color="#e94560";
+    $("wsFeedback").textContent="❌ Not quite! Try again.";
+    inp.value=""; inp.focus();
+  }
+}
+
+function wsSkip() {
+  if (_ws.over) return;
+  $("wsFeedback").style.color="#888";
+  $("wsFeedback").textContent="⏭ Skipped! It was: "+_ws.pool[_ws.current].w;
+  _ws.streak=0; _ws.current++;
+  setTimeout(wsLoadWord,1000);
+}
+
+function wsHint() {
+  if (_ws.hintUsed || _ws.over) return;
+  _ws.hintUsed=true;
+  $("wsHintText").textContent="💡 "+_ws.pool[_ws.current].h;
+}
+
+function wsEnd() {
+  _ws.over=true;
+  $("wsScrambled").textContent="🏁";
+  $("wsFeedback").style.color="#f0c040";
+  $("wsFeedback").textContent="Done! Final score: "+_ws.score+" / "+(_ws.pool.length*2)+" pts";
+  $("wsHintText").textContent="";
+  addCoins(Math.floor(_ws.score/2));
+}
+
+// ── TRUE OR FALSE RUSH ────────────────────────────────────────
+var TF_QUESTIONS = [
+  {q:"The Great Wall of China is visible from space with the naked eye.",a:false},
+  {q:"Sharks are mammals.",a:false},
+  {q:"The Amazon River is the longest river in the world.",a:false},
+  {q:"Humans share about 98% of their DNA with chimpanzees.",a:true},
+  {q:"Lightning never strikes the same place twice.",a:false},
+  {q:"The Eiffel Tower is taller in summer than in winter.",a:true},
+  {q:"Goldfish have a memory of only 3 seconds.",a:false},
+  {q:"Mount Everest is the tallest mountain measured from Earth's core.",a:false},
+  {q:"Bats are blind.",a:false},
+  {q:"The moon has its own light source.",a:false},
+  {q:"Water boils at a lower temperature at higher altitudes.",a:true},
+  {q:"Diamonds are made of carbon.",a:true},
+  {q:"The sun is a planet.",a:false},
+  {q:"Penguins live in the Arctic.",a:false},
+  {q:"Cleopatra lived closer in time to the Moon landing than to the Great Pyramid's construction.",a:true},
+  {q:"Humans have more than five senses.",a:true},
+  {q:"There are more stars in the universe than grains of sand on Earth's beaches.",a:true},
+  {q:"Napoleon Bonaparte was very short for his time.",a:false},
+  {q:"Honey never spoils.",a:true},
+  {q:"A group of flamingos is called a flamboyance.",a:true},
+  {q:"Oxygen is the most abundant gas in Earth's atmosphere.",a:false},
+  {q:"Octopuses have three hearts.",a:true},
+  {q:"The Pacific Ocean is larger than all of Earth's land combined.",a:true},
+  {q:"Chameleons change color primarily to camouflage themselves.",a:false},
+  {q:"A day on Venus is longer than a year on Venus.",a:true},
+  {q:"Humans are the only animals that laugh.",a:false},
+  {q:"Glass is a solid.",a:false},
+  {q:"Antibiotics are effective against viruses.",a:false},
+  {q:"The speed of light is faster than the speed of sound.",a:true},
+  {q:"All deserts are hot.",a:false},
+  {q:"The human body has 206 bones.",a:true},
+  {q:"Tomatoes are technically a fruit.",a:true},
+  {q:"Sound travels faster in water than in air.",a:true},
+  {q:"The heart is on the left side of the chest.",a:false},
+  {q:"There are more possible chess games than atoms in the observable universe.",a:true},
+  {q:"Elephants are afraid of mice.",a:false},
+  {q:"The Sahara is the world's largest desert.",a:false},
+  {q:"Cats have 32 muscles in each ear.",a:true},
+  {q:"A group of crows is called a murder.",a:true},
+  {q:"The letter 'E' is the most common letter in English.",a:true},
+  {q:"Humans and dinosaurs never coexisted.",a:true},
+  {q:"Spiders are insects.",a:false},
+  {q:"The blue whale is the largest animal to have ever existed.",a:true},
+  {q:"Pluto is still officially a planet.",a:false},
+  {q:"Worms breathe through their skin.",a:true},
+  {q:"Finland has the most lakes of any country.",a:true},
+  {q:"The liver is the largest internal organ.",a:true},
+  {q:"Crocodiles cannot stick their tongue out.",a:true},
+  {q:"A group of owls is called a parliament.",a:true},
+  {q:"The oldest known living tree is a bristlecone pine.",a:true},
+  {q:"Julius Caesar was an emperor of Rome.",a:false},
+  {q:"The Dead Sea is the world's saltiest body of water.",a:false},
+  {q:"A group of jellyfish is called a smack.",a:true},
+  {q:"Ants never sleep.",a:true},
+  {q:"The first iPhone was released in 2007.",a:true},
+  {q:"Light from the sun takes about 8 minutes to reach Earth.",a:true},
+  {q:"The human brain is about 73% water.",a:true},
+  {q:"Saturn could float on water if there was a bathtub big enough.",a:true},
+  {q:"All planets in our solar system rotate in the same direction.",a:false},
+  {q:"A sneeze travels faster than 100 mph.",a:true}
+];
+
+var _tf = { pool:[], idx:0, score:0, streak:0, over:false, timer:null, timeLeft:0, TF_TIME:8 };
+
+function tfNewGame() {
+  clearInterval(_tf.timer);
+  _tf.pool = TF_QUESTIONS.slice().sort(function(){ return Math.random()-0.5; });
+  _tf.idx=0; _tf.score=0; _tf.streak=0; _tf.over=false;
+  $("tfScore").textContent="0"; $("tfStreak").textContent="0";
+  $("tfFeedback").textContent="";
+  $("tfTrueBtn").disabled=false; $("tfFalseBtn").disabled=false;
+  tfLoadQuestion();
+}
+
+function tfLoadQuestion() {
+  if (_tf.idx >= _tf.pool.length) { tfEnd(); return; }
+  var q = _tf.pool[_tf.idx];
+  $("tfQuestion").textContent = q.q;
+  $("tfQCount").textContent = "Question "+(_tf.idx+1)+" of "+_tf.pool.length;
+  $("tfFeedback").textContent="";
+  $("tfTrueBtn").disabled=false; $("tfFalseBtn").disabled=false;
+  tfStartTimer();
+}
+
+function tfStartTimer() {
+  clearInterval(_tf.timer);
+  _tf.timeLeft=_tf.TF_TIME;
+  var fill=$("tfTimerFill");
+  if(fill) fill.style.width="100%";
+  _tf.timer=setInterval(function(){
+    _tf.timeLeft-=0.1;
+    var pct=Math.max(0,(_tf.timeLeft/_tf.TF_TIME)*100);
+    if(fill){ fill.style.width=pct+"%"; fill.style.background=pct>50?"#ff8a65":pct>25?"#f0c040":"#e94560"; }
+    if(_tf.timeLeft<=0){
+      clearInterval(_tf.timer);
+      _tf.streak=0;
+      $("tfFeedback").style.color="#888";
+      $("tfFeedback").textContent="⏱ Too slow! It was: "+(_tf.pool[_tf.idx].a?"TRUE":"FALSE");
+      $("tfStreak").textContent=_tf.streak;
+      $("tfTrueBtn").disabled=true; $("tfFalseBtn").disabled=true;
+      _tf.idx++;
+      setTimeout(tfLoadQuestion,1200);
+    }
+  },100);
+}
+
+function tfAnswer(ans) {
+  if (_tf.over) return;
+  clearInterval(_tf.timer);
+  $("tfTrueBtn").disabled=true; $("tfFalseBtn").disabled=true;
+  var correct = _tf.pool[_tf.idx].a;
+  if (ans===correct) {
+    _tf.score++; _tf.streak++;
+    $("tfFeedback").style.color="#81c784";
+    $("tfFeedback").textContent="✅ Correct! Streak: "+_tf.streak;
+  } else {
+    _tf.streak=0;
+    $("tfFeedback").style.color="#e94560";
+    $("tfFeedback").textContent="❌ Wrong! It was "+( correct?"TRUE":"FALSE");
+  }
+  $("tfScore").textContent=_tf.score;
+  $("tfStreak").textContent=_tf.streak;
+  _tf.idx++;
+  setTimeout(tfLoadQuestion,1000);
+}
+
+function tfEnd() {
+  _tf.over=true;
+  $("tfQuestion").textContent="🏁 Done!";
+  $("tfQCount").textContent="";
+  $("tfFeedback").style.color="#f0c040";
+  $("tfFeedback").textContent="Final score: "+_tf.score+" / "+_tf.pool.length+" correct!";
+  $("tfTimerFill").style.width="0%";
+  addCoins(Math.floor(_tf.score/3));
+}
+
+// ── TRIVIA DUEL ───────────────────────────────────────────────
+var _td = { playerScore:0, cpuScore:0, round:0, totalRounds:7, pool:[], current:null,
+  answered:false, cpuDelay:[1200,2500] };
+
+var TD_QUESTIONS = [];
+
+function tdBuildPool() {
+  // Pull from existing puzzle master questions if available
+  var pool = [];
+  if (typeof questions !== "undefined" && questions.length) {
+    var shuffled = questions.slice().sort(function(){ return Math.random()-0.5; });
+    pool = shuffled.slice(0,40).map(function(q){
+      return { q: q.question||q.q, choices: q.choices||q.options, correct: q.correct||q.answer };
+    }).filter(function(q){ return q.q && q.choices && q.choices.length>=2; });
+  }
+  // Built-in backup questions
+  var builtIn = [
+    {q:"What is the capital of France?",choices:["London","Paris","Berlin","Madrid"],correct:1},
+    {q:"How many sides does a hexagon have?",choices:["5","6","7","8"],correct:1},
+    {q:"Which planet is closest to the sun?",choices:["Venus","Earth","Mercury","Mars"],correct:2},
+    {q:"What gas do plants absorb from the air?",choices:["Oxygen","Nitrogen","Carbon dioxide","Hydrogen"],correct:2},
+    {q:"How many continents are there?",choices:["5","6","7","8"],correct:2},
+    {q:"What is H2O commonly known as?",choices:["Salt","Water","Acid","Oxygen"],correct:1},
+    {q:"Who wrote Romeo and Juliet?",choices:["Dickens","Shakespeare","Austen","Hemingway"],correct:1},
+    {q:"What color is a ruby?",choices:["Blue","Green","Red","Yellow"],correct:2},
+    {q:"How many legs does a spider have?",choices:["6","8","10","12"],correct:1},
+    {q:"What is the largest ocean on Earth?",choices:["Atlantic","Indian","Arctic","Pacific"],correct:3},
+    {q:"Which metal is liquid at room temperature?",choices:["Iron","Gold","Mercury","Silver"],correct:2},
+    {q:"What is the tallest mountain on Earth?",choices:["K2","Kilimanjaro","Everest","Denali"],correct:2},
+    {q:"How many bones does an adult human have?",choices:["186","206","226","246"],correct:1},
+    {q:"What is the smallest prime number?",choices:["0","1","2","3"],correct:2},
+    {q:"Which animal is known as the king of the jungle?",choices:["Tiger","Elephant","Lion","Leopard"],correct:2},
+    {q:"What language is the most spoken worldwide by native speakers?",choices:["English","Spanish","Mandarin","Hindi"],correct:2},
+    {q:"In which year did World War II end?",choices:["1943","1944","1945","1946"],correct:2},
+    {q:"What is the chemical symbol for gold?",choices:["Go","Gd","Au","Ag"],correct:2},
+    {q:"How many players are on a soccer team?",choices:["9","10","11","12"],correct:2},
+    {q:"What organ pumps blood through the body?",choices:["Liver","Lungs","Kidney","Heart"],correct:3}
+  ];
+  pool = pool.concat(builtIn);
+  return pool.sort(function(){ return Math.random()-0.5; });
+}
+
+function tdNewGame() {
+  _td.playerScore=0; _td.cpuScore=0; _td.round=0; _td.answered=false;
+  $("tdPlayerScore").textContent="0";
+  $("tdCPUScore").textContent="0";
+  $("tdStatus").textContent="";
+  _td.pool = tdBuildPool();
+  tdNextRound();
+}
+
+function tdNextRound() {
+  if (_td.round >= _td.totalRounds) { tdEnd(); return; }
+  _td.round++;
+  _td.answered=false;
+  $("tdRoundLabel").textContent="Round "+_td.round+" of "+_td.totalRounds;
+  $("tdStatus").textContent="";
+  _td.current = _td.pool[(_td.round-1) % _td.pool.length];
+  $("tdQuestion").textContent=_td.current.q;
+
+  var box=$("tdChoices"); box.innerHTML="";
+  _td.current.choices.forEach(function(ch,i){
+    var btn=document.createElement("button");
+    btn.textContent=(i+1)+". "+ch;
+    btn.setAttribute("aria-label","Choice "+( i+1)+": "+ch);
+    btn.style.cssText="width:100%;padding:12px;border-radius:10px;border:2px solid #444;background:#1a1a2e;color:#fff;cursor:pointer;text-align:left;font-size:0.9rem;";
+    btn.onclick=function(){ tdAnswer(i); };
+    btn.id="tdChoice"+i;
+    box.appendChild(btn);
+  });
+
+  // CPU "thinks" and answers after a random delay
+  var delay = _td.cpuDelay[0] + Math.random()*(_td.cpuDelay[1]-_td.cpuDelay[0]);
+  setTimeout(function(){
+    if (!_td.answered) {
+      // CPU has 65% accuracy
+      var cpuCorrect = Math.random() < 0.65;
+      var cpuPick = cpuCorrect ? _td.current.correct : ((_td.current.correct + 1 + Math.floor(Math.random()*(_td.current.choices.length-1))) % _td.current.choices.length);
+      tdResolveCPU(cpuPick);
+    }
+  }, delay);
+}
+
+function tdAnswer(idx) {
+  if (_td.answered) return;
+  _td.answered=true;
+  var correct=_td.current.correct;
+  var playerRight=(idx===correct);
+
+  // Disable all buttons
+  for(var i=0;i<_td.current.choices.length;i++){
+    var b=$("tdChoice"+i); if(b) b.disabled=true;
+    if(i===correct && b) b.style.borderColor="#81c784";
+    if(i===idx && i!==correct && b) b.style.borderColor="#e94560";
+  }
+
+  if(playerRight){ _td.playerScore++; $("tdPlayerScore").textContent=_td.playerScore; }
+  $("tdStatus").textContent=(playerRight?"✅ You got it!":"❌ Wrong — the answer was: "+_td.current.choices[correct]);
+  setTimeout(tdNextRound,1300);
+}
+
+function tdResolveCPU(cpuPick) {
+  if (_td.answered) return; // player already answered
+  _td.answered=true;
+  var correct=_td.current.correct;
+  if(cpuPick===correct){ _td.cpuScore++; $("tdCPUScore").textContent=_td.cpuScore; }
+
+  for(var i=0;i<_td.current.choices.length;i++){
+    var b=$("tdChoice"+i); if(b) b.disabled=true;
+    if(i===correct && b) b.style.borderColor="#81c784";
+  }
+  $("tdStatus").textContent="🤖 CPU answered first! Correct: "+_td.current.choices[correct];
+  setTimeout(tdNextRound,1300);
+}
+
+function tdEnd() {
+  $("tdQuestion").textContent="";
+  $("tdChoices").innerHTML="";
+  $("tdRoundLabel").textContent="Game Over!";
+  var msg;
+  if(_td.playerScore>_td.cpuScore){ msg="🏆 You win! "+_td.playerScore+" – "+_td.cpuScore; addCoins(5); }
+  else if(_td.cpuScore>_td.playerScore){ msg="🤖 CPU wins! "+_td.playerScore+" – "+_td.cpuScore; }
+  else { msg="🤝 It's a tie! "+_td.playerScore+" – "+_td.cpuScore; addCoins(2); }
+  $("tdStatus").textContent=msg;
 }
 </script>
   <script>
