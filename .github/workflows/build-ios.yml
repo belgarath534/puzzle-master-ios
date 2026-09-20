@@ -1,0 +1,57 @@
+name: Build iOS (unsigned)
+
+on:
+  push:
+    branches:
+      - claude/github-actions-ios-build
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    name: Puzzle Master iOS
+    runs-on: macos-14
+    timeout-minutes: 60
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install npm dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Capacitor sync
+        run: npx cap sync ios
+
+      - name: Build unsigned .app
+        run: |
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath "$RUNNER_TEMP/DerivedData" \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" \
+            DEVELOPMENT_TEAM="" \
+            clean build
+
+      - name: Package unsigned IPA
+        run: |
+          set -e
+          APP_PATH=$(find "$RUNNER_TEMP/DerivedData/Build/Products" -maxdepth 2 -name "*.app" | head -1)
+          mkdir -p build/ios/ipa/Payload
+          cp -r "$APP_PATH" build/ios/ipa/Payload/
+          cd build/ios/ipa
+          zip -r App.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: puzzle-master-unsigned-ipa
+          path: build/ios/ipa/App.ipa
+          retention-days: 14
