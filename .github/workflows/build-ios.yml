@@ -15,6 +15,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: List available Xcode versions on this runner
+        run: ls /Applications | grep -i xcode
+
       - name: Select latest stable Xcode
         # Matches codemagic.yaml's `xcode: latest` — the macos-15 runner's default
         # Xcode was still too old to resolve capacitor-social-login's Alamofire
