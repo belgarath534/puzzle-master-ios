@@ -9,11 +9,19 @@ on:
 jobs:
   build:
     name: Puzzle Master iOS
-    runs-on: macos-14
+    runs-on: macos-15
     timeout-minutes: 60
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Select latest stable Xcode
+        # Matches codemagic.yaml's `xcode: latest` — the macos-15 runner's default
+        # Xcode was still too old to resolve capacitor-social-login's Alamofire
+        # dependency (needs a newer Swift tools version), so pin explicitly.
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
 
       - name: Set up Node
         uses: actions/setup-node@v4
