@@ -45,8 +45,12 @@ workflows:
       app_store_connect: Accessible Backrooms
     environment:
       ios_signing:
-        # The team's distribution certificate saved in Codemagic. The App
-        # Store profile is made (or fetched) from Apple in the step below.
+        # Codemagic only installs a certificate alongside a profile, so this
+        # names one already saved in Codemagic (it isn't used for this app).
+        # Puzzle Master's own App Store profile is made or fetched from Apple
+        # in the step below.
+        provisioning_profiles:
+          - Dungeon Descent Live Activity App Store
         certificates:
           - Accessible Backrooms Distribution
       node: 22
