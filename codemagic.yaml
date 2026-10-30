@@ -95,9 +95,39 @@ workflows:
           grep -m1 CURRENT_PROJECT_VERSION ios/App/App.xcodeproj/project.pbxproj
       - name: Build signed IPA
         script: |
-          xcode-project build-ipa \
-            --project ios/App/App.xcodeproj \
-            --scheme App
+          # Plain xcodebuild, like the unsigned workflow: xcode-project
+          # build-ipa couldn't read this project's settings.
+          set -eo pipefail
+          ARCHIVE="$CM_BUILD_DIR/App.xcarchive"
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$ARCHIVE" \
+            archive 2>&1 | tee /tmp/archive.log | grep -E "error:|warning: .*sign|ARCHIVE (SUCCEEDED|FAILED)" || true
+          grep -q "ARCHIVE SUCCEEDED" /tmp/archive.log || { tail -80 /tmp/archive.log; exit 1; }
+          cat > /tmp/export.plist <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>ZPD555RW3A</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict><key>com.puzzle.master</key><string>Puzzle Master App Store</string></dict>
+            <key>uploadSymbols</key><true/>
+          </dict>
+          </plist>
+          PLIST
+          mkdir -p build/ios/ipa
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE" \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist /tmp/export.plist 2>&1 | tail -30
+          ls -la build/ios/ipa/*.ipa
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
