@@ -135,6 +135,8 @@ def main():
     locs = {l["attributes"]["locale"]: l for l in call("GET", f"/appStoreVersions/{vid}/appStoreVersionLocalizations")["data"]}
     for locale, text in listing["localizations"].items():
         attrs = {k: text[k] for k in ("description", "keywords", "promotionalText")}
+        if listing.get("urls", {}).get("support"):
+            attrs["supportUrl"] = listing["urls"]["support"]
         if locale in locs:
             call("PATCH", f"/appStoreVersionLocalizations/{locs[locale]['id']}",
                  {"data": {"type": "appStoreVersionLocalizations", "id": locs[locale]["id"], "attributes": attrs}})
@@ -149,14 +151,19 @@ def main():
     # Subtitle per language, and the category.
     infos = call("GET", f"/apps/{app_id}/appInfos")["data"]
     info = next((i for i in infos if (i["attributes"].get("appStoreState") or i["attributes"].get("state")) not in ("READY_FOR_SALE", "READY_FOR_DISTRIBUTION")), infos[0])
+    def info_attrs(text):
+        a = {"subtitle": text["subtitle"]}
+        if listing.get("urls", {}).get("privacyPolicy"):
+            a["privacyPolicyUrl"] = listing["urls"]["privacyPolicy"]
+        return a
     ilocs = {l["attributes"]["locale"]: l for l in call("GET", f"/appInfos/{info['id']}/appInfoLocalizations")["data"]}
     for locale, text in listing["localizations"].items():
         if locale in ilocs:
             call("PATCH", f"/appInfoLocalizations/{ilocs[locale]['id']}",
-                 {"data": {"type": "appInfoLocalizations", "id": ilocs[locale]["id"], "attributes": {"subtitle": text["subtitle"]}}})
+                 {"data": {"type": "appInfoLocalizations", "id": ilocs[locale]["id"], "attributes": info_attrs(text)}})
         else:
             call("POST", "/appInfoLocalizations",
-                 {"data": {"type": "appInfoLocalizations", "attributes": {"locale": locale, "name": "Puzzle Master", "subtitle": text["subtitle"]},
+                 {"data": {"type": "appInfoLocalizations", "attributes": {"locale": locale, "name": "Puzzle Master", **info_attrs(text)},
                            "relationships": {"appInfo": rel("appInfos", info["id"])}}})
         print("✓ Subtitle", locale)
     c = listing["category"]
