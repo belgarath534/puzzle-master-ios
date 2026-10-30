@@ -303,6 +303,23 @@ def main():
                 if not (cur and cur.get("data")):
                     asset("gameCenterAchievementImages", "gameCenterAchievementLocalization", "gameCenterAchievementLocalizations", lid, img)
             print(f"✓ Achievement {a['vendorIdentifier']} ({a['points']} pts)")
+            existing[a["vendorIdentifier"]] = aid
+
+        # Game Center on this version, and every achievement released with it
+        # (what ticking each one under the version page's Game Center does).
+        gcv = call("GET", f"/appStoreVersions/{vid}/gameCenterAppVersion", ok=(200,), quiet=True)
+        if not (gcv and gcv.get("data")):
+            gcv = call("POST", "/gameCenterAppVersions", {"data": {"type": "gameCenterAppVersions",
+                       "relationships": {"appStoreVersion": rel("appStoreVersions", vid)}}})
+        print("✓ Game Center on version" if gcv and gcv.get("data") else "  ✗ Couldn't turn Game Center on for the version")
+        released = 0
+        for vend, aid in existing.items():
+            r = call("POST", "/gameCenterAchievementReleases", {"data": {"type": "gameCenterAchievementReleases", "relationships": {
+                "gameCenterDetail": rel("gameCenterDetails", gcd_id), "gameCenterAchievement": rel("gameCenterAchievements", aid)}}},
+                ok=(200, 201, 409), quiet=released > 0)
+            if r is not None:
+                released += 1
+        print(f"✓ Achievements added for release: {released} of {len(existing)}")
 
     if errors:
         print(f"\n{len(errors)} problem(s):")
