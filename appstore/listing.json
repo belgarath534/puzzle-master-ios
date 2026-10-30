@@ -68,5 +68,9 @@
     ]
   },
   "price": "free",
-  "copyright": "2026 Leo Productions"
+  "copyright": "2026 Leo Productions",
+  "review": {
+    "demoAccountRequired": false,
+    "notes": "Puzzle Master is a riddle and trivia game: 35+ categories and 4,500+ questions in English, Portuguese and Spanish (the first launch asks for a language).\n\nNO ACCOUNT NEEDED\nThe whole game can be played without signing in, so no demo account is required. Signing in is optional and only backs up progress and adds the player to the weekly leaderboards.\n\nSIGN-IN AND ACCOUNT DELETION\nMain menu → Settings → Cloud Sync:\n• \"Sign in with Apple\" and \"Sign in with Google\" (either one works).\n• Once signed in, \"Delete my account\" asks for confirmation, then permanently deletes the cloud save, leaderboard entries, notification token and the sign-in account. Progress on the device stays.\n\nHOW TO TRY THE MAIN MODES\n• Play → pick a category → pick a difficulty → pick a puzzle.\n• ⚡ Blitz Mode: answer as many as possible before the timer runs out; three wrong answers end the round.\n• Daily Puzzle, Mini Games and Tournament Mode (Tournament opens on Saturdays at 7 PM).\n\nIN-APP PURCHASES\nCoin packs (consumables) can be bought in the Shop. Coins are also earned by playing, and nothing requires buying them.\n\nGAME CENTER\n32 achievements; the game signs into Game Center automatically on launch.\n\nACCESSIBILITY\nThe game is built to be played with VoiceOver: questions, answers and results are read aloud.\n\nCONTENT\nSome classic lateral-thinking riddles mention murder, guns or suicide in text, and there is a Halloween category; nothing is graphic. The age rating answers reflect this.\n\nPrivacy policy: https://belgarath534.github.io/puzzle-master-adds/privacy.html"
+  }
 }

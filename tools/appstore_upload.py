@@ -150,6 +150,18 @@ def main():
         if call("PATCH", f"/appStoreVersions/{vid}", {"data": {"type": "appStoreVersions", "id": vid,
                                                              "attributes": {"copyright": listing["copyright"]}}}) is not None:
             print("✓ Copyright:", listing["copyright"])
+    # Notes for App Review.
+    if listing.get("review"):
+        attrs = {"notes": listing["review"]["notes"], "demoAccountRequired": listing["review"]["demoAccountRequired"]}
+        have = call("GET", f"/appStoreVersions/{vid}/appStoreReviewDetail", ok=(200,), quiet=True)
+        if have and have.get("data"):
+            done = call("PATCH", f"/appStoreReviewDetails/{have['data']['id']}",
+                        {"data": {"type": "appStoreReviewDetails", "id": have["data"]["id"], "attributes": attrs}})
+        else:
+            done = call("POST", "/appStoreReviewDetails", {"data": {"type": "appStoreReviewDetails", "attributes": attrs,
+                        "relationships": {"appStoreVersion": rel("appStoreVersions", vid)}}})
+        if done is not None:
+            print("✓ App Review notes")
     locs = {l["attributes"]["locale"]: l for l in call("GET", f"/appStoreVersions/{vid}/appStoreVersionLocalizations")["data"]}
     for locale, text in listing["localizations"].items():
         attrs = {k: text[k] for k in ("description", "keywords", "promotionalText")}
