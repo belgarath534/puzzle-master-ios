@@ -1598,7 +1598,7 @@ async function initGameCenter() {
     if (!window.Capacitor || !Capacitor.Plugins) return;
     if (!window.Capacitor.getPlatform || window.Capacitor.getPlatform() !== 'ios') return;
     if (_pmGameCenterSignedIn) return;
-    var gcPlugin = Capacitor.Plugins.GameConnect;
+    var gcPlugin = Capacitor.Plugins.CapacitorGameConnect || Capacitor.Plugins.GameConnect;
     if (!gcPlugin) {
       console.warn('[PM] GameConnect plugin not found. Available:', Object.keys(Capacitor.Plugins));
       return;
@@ -1622,7 +1622,7 @@ function unlockAchievement(id) {
   // ── Apple Game Center unlock (iOS only — no Android build for this app) ──
   try {
     var appleId = ACH_APPLE_ID[id];
-    var gcPlugin = (window.Capacitor && Capacitor.Plugins) ? Capacitor.Plugins.GameConnect : null;
+    var gcPlugin = (window.Capacitor && Capacitor.Plugins) ? (Capacitor.Plugins.CapacitorGameConnect || Capacitor.Plugins.GameConnect) : null;
     if (appleId && gcPlugin && window.Capacitor.getPlatform && window.Capacitor.getPlatform() === 'ios') {
       gcPlugin.unlockAchievement({ achievementID: appleId })
         .catch(function(e){ console.warn('[PM] Game Center achievement failed:', e); });

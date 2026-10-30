@@ -162,3 +162,17 @@ workflows:
           app-store-connect bundle-ids enable-capabilities "$RID" --capability "Game Center"
           echo "Capabilities now:"
           app-store-connect bundle-ids capabilities "$RID" || true
+
+  appstore-listing:
+    # Puts the listing text, category, screenshots and Game Center
+    # achievements on App Store Connect (tools/appstore_upload.py).
+    name: Upload App Store listing
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Accessible Backrooms
+    scripts:
+      - name: Upload the listing
+        script: |
+          pip3 install --quiet --break-system-packages pyjwt cryptography requests 2>/dev/null || pip3 install --quiet pyjwt cryptography requests
+          python3 tools/appstore_upload.py

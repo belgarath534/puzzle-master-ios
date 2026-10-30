@@ -1,0 +1,27 @@
+{
+  "category": {
+    "primary": "GAMES",
+    "primarySubOne": "GAMES_TRIVIA",
+    "primarySubTwo": "GAMES_PUZZLE"
+  },
+  "localizations": {
+    "en-US": {
+      "subtitle": "Riddles, Trivia & Brain Games",
+      "promotionalText": "Over 4,500 riddles and puzzles in 35+ categories. Race the clock in Blitz Mode, take on the Saturday tournament, and play in English, Portuguese or Spanish.",
+      "keywords": "riddles,trivia,quiz,brain,puzzle,logic,math,word,blitz,daily,tournament,memory,accessible,voiceover",
+      "description": "Think you can solve them all? Puzzle Master packs more than 4,500 riddles and puzzles into over 35 categories, from Classic Riddles and Word Puzzles to Logic, Math, Lateral Thinking, Hard Math, Algebra and The Shadow Riddles.\n\nWAYS TO PLAY\n• Play — pick any category and difficulty: Easy, Medium, Hard or Mixed.\n• Daily Puzzle — a new challenge every day.\n• Blitz Mode — race the clock. Three wrong answers and it's over.\n• Tournament Mode — a timed challenge that opens every Saturday at 7 PM.\n• Mini Games — Number Crunch, Memory Match, Word Scramble, True or False Rush and Trivia Duel against the CPU.\n\nKEEP GROWING\n• Earn coins for every right answer and spend them in the shop on hints, boosts and new themes.\n• Unlock 32 achievements, all on Game Center.\n• Climb the leaderboard and your High Score rank, from Beginner all the way to Puzzle Legend.\n• Keep your login streak going for daily bonuses.\n\nFOR EVERYONE\n• Fully playable in English, Portuguese and Spanish.\n• Built to work with VoiceOver, with every question and answer read aloud.\n• A built-in music player and a step-by-step tutorial for new players.\n\nHow far can your mind go?"
+    },
+    "pt-BR": {
+      "subtitle": "Charadas, Quiz e Desafios",
+      "promotionalText": "Mais de 4.500 charadas e desafios em mais de 35 categorias. Corra contra o relógio no Modo Blitz, encare o torneio de sábado e jogue em português, inglês ou espanhol.",
+      "keywords": "charadas,quiz,trivia,enigmas,desafios,logica,matematica,palavras,blitz,diario,torneio,memoria",
+      "description": "Acha que consegue resolver todos? Puzzle Master reúne mais de 4.500 charadas e desafios em mais de 35 categorias, de Charadas Clássicas e Jogos de Palavras a Lógica, Matemática, Pensamento Lateral, Matemática Difícil, Álgebra e As Charadas das Sombras.\n\nMODOS DE JOGO\n• Jogar — escolha qualquer categoria e dificuldade: Fácil, Médio, Difícil ou Misto.\n• Desafio Diário — um novo desafio todo dia.\n• Modo Blitz — corra contra o relógio. Três erros e acabou.\n• Modo Torneio — um desafio cronometrado que abre todo sábado às 19h.\n• Minijogos — Number Crunch, Jogo da Memória, Palavras Embaralhadas, Verdadeiro ou Falso e Duelo de Trivia contra a CPU.\n\nCONTINUE EVOLUINDO\n• Ganhe moedas a cada acerto e gaste na loja em dicas, bônus e novos temas.\n• Desbloqueie 32 conquistas, todas no Game Center.\n• Suba no placar e no seu ranking de pontuação, de Iniciante até Lenda dos Desafios.\n• Mantenha sua sequência de logins para ganhar bônus diários.\n\nPARA TODOS\n• Totalmente jogável em português, inglês e espanhol.\n• Feito para funcionar com o VoiceOver, com cada pergunta e resposta lida em voz alta.\n• Um player de música e um tutorial passo a passo para novos jogadores.\n\nAté onde sua mente consegue ir?"
+    },
+    "es-MX": {
+      "subtitle": "Acertijos, Trivia y Retos",
+      "promotionalText": "Más de 4,500 acertijos y retos en más de 35 categorías. Corre contra el reloj en el Modo Blitz, enfrenta el torneo del sábado y juega en español, inglés o portugués.",
+      "keywords": "acertijos,trivia,quiz,adivinanzas,retos,logica,matematicas,palabras,blitz,diario,torneo,memoria",
+      "description": "¿Crees que puedes resolverlos todos? Puzzle Master reúne más de 4,500 acertijos y retos en más de 35 categorías, desde Acertijos Clásicos y Juegos de Palabras hasta Lógica, Matemáticas, Pensamiento Lateral, Matemáticas Difíciles, Álgebra y Los Acertijos de las Sombras.\n\nFORMAS DE JUGAR\n• Jugar — elige cualquier categoría y dificultad: Fácil, Media, Difícil o Mixta.\n• Acertijo Diario — un nuevo reto cada día.\n• Modo Blitz — corre contra el reloj. Tres errores y se acabó.\n• Modo Torneo — un reto cronometrado que abre cada sábado a las 7 PM.\n• Minijuegos — Number Crunch, Memorama, Palabras Revueltas, Verdadero o Falso y Duelo de Trivia contra la CPU.\n\nSIGUE CRECIENDO\n• Gana monedas con cada acierto y gástalas en la tienda en pistas, mejoras y nuevos temas.\n• Desbloquea 32 logros, todos en Game Center.\n• Sube en la tabla de clasificación y en tu rango de puntuación, de Principiante a Leyenda de los Acertijos.\n• Mantén tu racha de inicios de sesión para bonos diarios.\n\nPARA TODOS\n• Totalmente jugable en español, inglés y portugués.\n• Hecho para funcionar con VoiceOver, con cada pregunta y respuesta leída en voz alta.\n• Un reproductor de música y un tutorial paso a paso para nuevos jugadores.\n\n¿Hasta dónde puede llegar tu mente?"
+    }
+  }
+}

@@ -1,0 +1,642 @@
+[
+ {
+  "key": "firstPuzzle",
+  "vendorIdentifier": "PM_FIRST_PUZZLE",
+  "points": 10,
+  "icon": "🧩",
+  "localizations": {
+   "en-US": {
+    "name": "First Puzzle Solved",
+    "description": "You solved your first puzzle!"
+   },
+   "pt-BR": {
+    "name": "Primeiro Desafio Resolvido",
+    "description": "Você resolveu seu primeiro desafio!"
+   },
+   "es-MX": {
+    "name": "Primer Acertijo Resuelto",
+    "description": "¡Resolviste tu primer acertijo!"
+   }
+  }
+ },
+ {
+  "key": "viewCredits",
+  "vendorIdentifier": "PM_VIEW_CREDITS",
+  "points": 5,
+  "icon": "🎬",
+  "localizations": {
+   "en-US": {
+    "name": "Credits Explorer",
+    "description": "You viewed the credits!"
+   },
+   "pt-BR": {
+    "name": "Explorador de Créditos",
+    "description": "Você viu os créditos!"
+   },
+   "es-MX": {
+    "name": "Explorador de Créditos",
+    "description": "¡Viste los créditos!"
+   }
+  }
+ },
+ {
+  "key": "openPause",
+  "vendorIdentifier": "PM_OPEN_PAUSE",
+  "points": 5,
+  "icon": "⏸️",
+  "localizations": {
+   "en-US": {
+    "name": "Paused the Game",
+    "description": "You opened the pause menu!"
+   },
+   "pt-BR": {
+    "name": "Pausou o Jogo",
+    "description": "Você abriu o menu de pausa!"
+   },
+   "es-MX": {
+    "name": "Pausaste el Juego",
+    "description": "¡Abriste el menú de pausa!"
+   }
+  }
+ },
+ {
+  "key": "changeMusic",
+  "vendorIdentifier": "PM_CHANGE_MUSIC",
+  "points": 5,
+  "icon": "🎵",
+  "localizations": {
+   "en-US": {
+    "name": "Music Maestro",
+    "description": "You changed the menu music!"
+   },
+   "pt-BR": {
+    "name": "Maestro da Música",
+    "description": "Você mudou a música do menu!"
+   },
+   "es-MX": {
+    "name": "Maestro de la Música",
+    "description": "¡Cambiaste la música del menú!"
+   }
+  }
+ },
+ {
+  "key": "usedHint",
+  "vendorIdentifier": "PM_USED_HINT",
+  "points": 5,
+  "icon": "💡",
+  "localizations": {
+   "en-US": {
+    "name": "Hint Seeker",
+    "description": "You used your first hint!"
+   },
+   "pt-BR": {
+    "name": "Buscador de Dicas",
+    "description": "Você usou sua primeira dica!"
+   },
+   "es-MX": {
+    "name": "Buscador de Pistas",
+    "description": "¡Usaste tu primera pista!"
+   }
+  }
+ },
+ {
+  "key": "solve10",
+  "vendorIdentifier": "PM_SOLVE_10",
+  "points": 10,
+  "icon": "🔟",
+  "localizations": {
+   "en-US": {
+    "name": "Getting Started",
+    "description": "Solve 10 puzzles."
+   },
+   "pt-BR": {
+    "name": "Começando Bem",
+    "description": "Resolva 10 desafios."
+   },
+   "es-MX": {
+    "name": "Empezando Bien",
+    "description": "Resuelve 10 acertijos."
+   }
+  }
+ },
+ {
+  "key": "solve25",
+  "vendorIdentifier": "PM_SOLVE_25",
+  "points": 15,
+  "icon": "⭐",
+  "localizations": {
+   "en-US": {
+    "name": "Puzzle Enthusiast",
+    "description": "Solve 25 puzzles."
+   },
+   "pt-BR": {
+    "name": "Entusiasta",
+    "description": "Resolva 25 desafios."
+   },
+   "es-MX": {
+    "name": "Entusiasta",
+    "description": "Resuelve 25 acertijos."
+   }
+  }
+ },
+ {
+  "key": "solve50",
+  "vendorIdentifier": "PM_SOLVE_50",
+  "points": 20,
+  "icon": "🌟",
+  "localizations": {
+   "en-US": {
+    "name": "Puzzle Veteran",
+    "description": "Solve 50 puzzles."
+   },
+   "pt-BR": {
+    "name": "Veterano",
+    "description": "Resolva 50 desafios."
+   },
+   "es-MX": {
+    "name": "Veterano",
+    "description": "Resuelve 50 acertijos."
+   }
+  }
+ },
+ {
+  "key": "solve100",
+  "vendorIdentifier": "PM_SOLVE_100",
+  "points": 30,
+  "icon": "💯",
+  "localizations": {
+   "en-US": {
+    "name": "Century Solver",
+    "description": "Solve 100 puzzles."
+   },
+   "pt-BR": {
+    "name": "Centenário",
+    "description": "Resolva 100 desafios."
+   },
+   "es-MX": {
+    "name": "Centenario",
+    "description": "Resuelve 100 acertijos."
+   }
+  }
+ },
+ {
+  "key": "solve250",
+  "vendorIdentifier": "PM_SOLVE_250",
+  "points": 50,
+  "icon": "🏅",
+  "localizations": {
+   "en-US": {
+    "name": "Puzzle Master",
+    "description": "Solve 250 puzzles."
+   },
+   "pt-BR": {
+    "name": "Mestre dos Desafios",
+    "description": "Resolva 250 desafios."
+   },
+   "es-MX": {
+    "name": "Maestro de Acertijos",
+    "description": "Resuelve 250 acertijos."
+   }
+  }
+ },
+ {
+  "key": "solve500",
+  "vendorIdentifier": "PM_SOLVE_500",
+  "points": 80,
+  "icon": "🧠",
+  "localizations": {
+   "en-US": {
+    "name": "Legendary Mind",
+    "description": "Solve 500 puzzles!"
+   },
+   "pt-BR": {
+    "name": "Mente Lendária",
+    "description": "Resolva 500 desafios!"
+   },
+   "es-MX": {
+    "name": "Mente Legendaria",
+    "description": "¡Resuelve 500 acertijos!"
+   }
+  }
+ },
+ {
+  "key": "streak5",
+  "vendorIdentifier": "PM_STREAK_5",
+  "points": 15,
+  "icon": "🔥",
+  "localizations": {
+   "en-US": {
+    "name": "On A Roll",
+    "description": "Solve 5 puzzles in a row correctly."
+   },
+   "pt-BR": {
+    "name": "Em Chamas",
+    "description": "Resolva 5 desafios seguidos."
+   },
+   "es-MX": {
+    "name": "En Racha",
+    "description": "Resuelve 5 acertijos seguidos."
+   }
+  }
+ },
+ {
+  "key": "streak10",
+  "vendorIdentifier": "PM_STREAK_10",
+  "points": 25,
+  "icon": "⚡",
+  "localizations": {
+   "en-US": {
+    "name": "Unstoppable",
+    "description": "Solve 10 puzzles in a row correctly."
+   },
+   "pt-BR": {
+    "name": "Imparável",
+    "description": "Resolva 10 desafios seguidos."
+   },
+   "es-MX": {
+    "name": "Imparable",
+    "description": "Resuelve 10 acertijos seguidos."
+   }
+  }
+ },
+ {
+  "key": "streak25",
+  "vendorIdentifier": "PM_STREAK_25",
+  "points": 50,
+  "icon": "💎",
+  "localizations": {
+   "en-US": {
+    "name": "Flawless",
+    "description": "Solve 25 puzzles in a row correctly!"
+   },
+   "pt-BR": {
+    "name": "Perfeito",
+    "description": "Resolva 25 desafios seguidos!"
+   },
+   "es-MX": {
+    "name": "Perfecto",
+    "description": "¡Resuelve 25 acertijos seguidos!"
+   }
+  }
+ },
+ {
+  "key": "completeCat",
+  "vendorIdentifier": "PM_COMPLETE_CAT",
+  "points": 40,
+  "icon": "✅",
+  "localizations": {
+   "en-US": {
+    "name": "Category Cleared",
+    "description": "Complete all puzzles in one category."
+   },
+   "pt-BR": {
+    "name": "Categoria Completa",
+    "description": "Complete todos os desafios de uma categoria."
+   },
+   "es-MX": {
+    "name": "Categoría Completada",
+    "description": "Completa todos los acertijos de una categoría."
+   }
+  }
+ },
+ {
+  "key": "complete5cats",
+  "vendorIdentifier": "PM_COMPLETE_5CATS",
+  "points": 70,
+  "icon": "📚",
+  "localizations": {
+   "en-US": {
+    "name": "Category Master",
+    "description": "Complete all puzzles in 5 categories."
+   },
+   "pt-BR": {
+    "name": "Mestre das Categorias",
+    "description": "Complete 5 categorias inteiras."
+   },
+   "es-MX": {
+    "name": "Maestro de Categorías",
+    "description": "Completa 5 categorías enteras."
+   }
+  }
+ },
+ {
+  "key": "finishTournament",
+  "vendorIdentifier": "PM_FINISH_TOURNAMENT",
+  "points": 40,
+  "icon": "🏆",
+  "localizations": {
+   "en-US": {
+    "name": "Tournament Champion",
+    "description": "Finish a tournament."
+   },
+   "pt-BR": {
+    "name": "Campeão do Torneio",
+    "description": "Termine um torneio."
+   },
+   "es-MX": {
+    "name": "Campeón del Torneo",
+    "description": "Termina un torneo."
+   }
+  }
+ },
+ {
+  "key": "visitShop",
+  "vendorIdentifier": "PM_VISIT_SHOP",
+  "points": 5,
+  "icon": "🛒",
+  "localizations": {
+   "en-US": {
+    "name": "Window Shopper",
+    "description": "Visit the shop."
+   },
+   "pt-BR": {
+    "name": "Vitrine",
+    "description": "Visite a loja."
+   },
+   "es-MX": {
+    "name": "Vidriera",
+    "description": "Visita la tienda."
+   }
+  }
+ },
+ {
+  "key": "puzzleMastery",
+  "vendorIdentifier": "PM_PUZZLE_MASTERY",
+  "points": 100,
+  "icon": "👑",
+  "localizations": {
+   "en-US": {
+    "name": "Puzzle Mastery!",
+    "description": "Complete every single category in the game!"
+   },
+   "pt-BR": {
+    "name": "Mestre dos Desafios!",
+    "description": "Complete todas as categorias do jogo!"
+   },
+   "es-MX": {
+    "name": "¡Maestría de Acertijos!",
+    "description": "¡Completa todas las categorías del juego!"
+   }
+  }
+ },
+ {
+  "key": "trickOrTreat",
+  "vendorIdentifier": "PM_TRICK_OR_TREAT",
+  "points": 25,
+  "icon": "🎃",
+  "localizations": {
+   "en-US": {
+    "name": "Trick or Treat!",
+    "description": "Complete the Halloween category!"
+   },
+   "pt-BR": {
+    "name": "Doce ou Travessura!",
+    "description": "Complete a categoria de Halloween!"
+   },
+   "es-MX": {
+    "name": "¡Truco o Trato!",
+    "description": "¡Completa la categoría de Halloween!"
+   }
+  }
+ },
+ {
+  "key": "ghostHunter",
+  "vendorIdentifier": "PM_GHOST_HUNTER",
+  "points": 25,
+  "icon": "👻",
+  "localizations": {
+   "en-US": {
+    "name": "Ghost Hunter",
+    "description": "Get 10 correct in a row during October!"
+   },
+   "pt-BR": {
+    "name": "Caçador de Fantasmas",
+    "description": "Acerte 10 seguidos durante outubro!"
+   },
+   "es-MX": {
+    "name": "Cazador de Fantasmas",
+    "description": "¡Acierta 10 seguidos durante octubre!"
+   }
+  }
+ },
+ {
+  "key": "visitMusicPlayer",
+  "vendorIdentifier": "PM_VISIT_MUSIC_PLAYER",
+  "points": 5,
+  "icon": "🎧",
+  "localizations": {
+   "en-US": {
+    "name": "Music Lover",
+    "description": "Visit the music player."
+   },
+   "pt-BR": {
+    "name": "Amante da Música",
+    "description": "Visite o player de música."
+   },
+   "es-MX": {
+    "name": "Amante de la Música",
+    "description": "Visita el reproductor de música."
+   }
+  }
+ },
+ {
+  "key": "dailyPuzzle",
+  "vendorIdentifier": "PM_DAILY_PUZZLE",
+  "points": 15,
+  "icon": "📅",
+  "localizations": {
+   "en-US": {
+    "name": "Daily Grind",
+    "description": "Complete the daily puzzle."
+   },
+   "pt-BR": {
+    "name": "Rotina Diária",
+    "description": "Complete o desafio diário."
+   },
+   "es-MX": {
+    "name": "Rutina Diaria",
+    "description": "Completa el desafío diario."
+   }
+  }
+ },
+ {
+  "key": "rich",
+  "vendorIdentifier": "PM_RICH",
+  "points": 25,
+  "icon": "💰",
+  "localizations": {
+   "en-US": {
+    "name": "Rolling In Coins",
+    "description": "Accumulate 500 coins."
+   },
+   "pt-BR": {
+    "name": "Cheio de Moedas",
+    "description": "Acumule 500 moedas."
+   },
+   "es-MX": {
+    "name": "Lleno de Monedas",
+    "description": "Acumula 500 monedas."
+   }
+  }
+ },
+ {
+  "key": "loginStreak3",
+  "vendorIdentifier": "PM_LOGIN_STREAK_3",
+  "points": 10,
+  "icon": "📆",
+  "localizations": {
+   "en-US": {
+    "name": "Consistent",
+    "description": "Log in 3 days in a row."
+   },
+   "pt-BR": {
+    "name": "Consistente",
+    "description": "Entre 3 dias seguidos."
+   },
+   "es-MX": {
+    "name": "Consistente",
+    "description": "Entra 3 días seguidos."
+   }
+  }
+ },
+ {
+  "key": "loginStreak7",
+  "vendorIdentifier": "PM_LOGIN_STREAK_7",
+  "points": 20,
+  "icon": "🗓️",
+  "localizations": {
+   "en-US": {
+    "name": "Dedicated",
+    "description": "Log in 7 days in a row."
+   },
+   "pt-BR": {
+    "name": "Dedicado",
+    "description": "Entre 7 dias seguidos."
+   },
+   "es-MX": {
+    "name": "Dedicado",
+    "description": "Entra 7 días seguidos."
+   }
+  }
+ },
+ {
+  "key": "loginStreak30",
+  "vendorIdentifier": "PM_LOGIN_STREAK_30",
+  "points": 60,
+  "icon": "🌙",
+  "localizations": {
+   "en-US": {
+    "name": "Legendary",
+    "description": "Log in 30 days in a row!"
+   },
+   "pt-BR": {
+    "name": "Lendário",
+    "description": "Entre 30 dias seguidos!"
+   },
+   "es-MX": {
+    "name": "Legendario",
+    "description": "¡Entra 30 días seguidos!"
+   }
+  }
+ },
+ {
+  "key": "blitzFirst",
+  "vendorIdentifier": "PM_BLITZ_FIRST",
+  "points": 10,
+  "icon": "⏱️",
+  "localizations": {
+   "en-US": {
+    "name": "Blitz Beginner",
+    "description": "Complete your first Blitz session!"
+   },
+   "pt-BR": {
+    "name": "Iniciante do Blitz",
+    "description": "Complete sua primeira sessão Blitz!"
+   },
+   "es-MX": {
+    "name": "Principiante Blitz",
+    "description": "¡Completa tu primera sesión Blitz!"
+   }
+  }
+ },
+ {
+  "key": "blitz10",
+  "vendorIdentifier": "PM_BLITZ_10",
+  "points": 20,
+  "icon": "🎯",
+  "localizations": {
+   "en-US": {
+    "name": "Blitz Striker",
+    "description": "Answer 10 questions in a single Blitz session."
+   },
+   "pt-BR": {
+    "name": "Artilheiro Blitz",
+    "description": "Responda 10 perguntas em uma sessão Blitz."
+   },
+   "es-MX": {
+    "name": "Goleador Blitz",
+    "description": "Responde 10 preguntas en una sesión Blitz."
+   }
+  }
+ },
+ {
+  "key": "blitz25",
+  "vendorIdentifier": "PM_BLITZ_25",
+  "points": 40,
+  "icon": "🚀",
+  "localizations": {
+   "en-US": {
+    "name": "Blitz Master",
+    "description": "Answer 25 questions in a single Blitz session!"
+   },
+   "pt-BR": {
+    "name": "Mestre do Blitz",
+    "description": "Responda 25 perguntas em uma sessão Blitz!"
+   },
+   "es-MX": {
+    "name": "Maestro Blitz",
+    "description": "¡Responde 25 preguntas en una sesión Blitz!"
+   }
+  }
+ },
+ {
+  "key": "blitzSurvivor",
+  "vendorIdentifier": "PM_BLITZ_SURVIVOR",
+  "points": 30,
+  "icon": "❤️",
+  "localizations": {
+   "en-US": {
+    "name": "Survivor",
+    "description": "Finish a Blitz session with all 3 hearts intact!"
+   },
+   "pt-BR": {
+    "name": "Sobrevivente",
+    "description": "Termine uma sessão Blitz com os 3 corações intactos!"
+   },
+   "es-MX": {
+    "name": "Superviviente",
+    "description": "¡Termina una sesión Blitz con los 3 corazones intactos!"
+   }
+  }
+ },
+ {
+  "key": "blitzSpeedster",
+  "vendorIdentifier": "PM_BLITZ_SPEEDSTER",
+  "points": 40,
+  "icon": "💨",
+  "localizations": {
+   "en-US": {
+    "name": "Speedster",
+    "description": "Answer 15 questions in the 5-minute Blitz mode!"
+   },
+   "pt-BR": {
+    "name": "Veloz",
+    "description": "Responda 15 perguntas no modo Blitz de 5 minutos!"
+   },
+   "es-MX": {
+    "name": "Veloz",
+    "description": "¡Responde 15 preguntas en el modo Blitz de 5 minutos!"
+   }
+  }
+ }
+]
