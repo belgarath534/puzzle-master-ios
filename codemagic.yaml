@@ -45,11 +45,10 @@ workflows:
       app_store_connect: Accessible Backrooms
     environment:
       ios_signing:
-        # Codemagic fetches (or creates) the App Store profile for this bundle
-        # ID from Apple with the key above, and signs with the team's
-        # distribution certificate saved in Codemagic.
-        distribution_type: app_store
-        bundle_identifier: com.puzzle.master
+        # The team's distribution certificate saved in Codemagic. The App
+        # Store profile is made (or fetched) from Apple in the step below.
+        certificates:
+          - Accessible Backrooms Distribution
       node: 22
       xcode: latest
       cocoapods: default
@@ -58,6 +57,32 @@ workflows:
         script: npm install --legacy-peer-deps
       - name: Capacitor sync
         script: npx cap sync ios
+      - name: Get the App Store profile from Apple
+        script: |
+          set -e
+          ID=com.puzzle.master
+          NAME="Puzzle Master App Store"
+          DEST="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$DEST"
+          # An active one already made?
+          TMP=$(mktemp -d)
+          app-store-connect profiles list --type IOS_APP_STORE --state ACTIVE --name "$NAME" --save --profiles-dir "$TMP" || true
+          if ls "$TMP"/* >/dev/null 2>&1; then
+            echo "Using the existing \"$NAME\" profile"
+            cp "$TMP"/* "$DEST/"
+          else
+            RID=$(app-store-connect bundle-ids list --bundle-id-identifier "$ID" --strict-match-identifier --platform IOS --json \
+              | python3 -c "import json,sys; print(json.load(sys.stdin)[0]['id'])")
+            CERTS=$(app-store-connect certificates list --type DISTRIBUTION --json 2>/dev/null \
+              | python3 -c "import json,sys; print(' '.join(c['id'] for c in json.load(sys.stdin)))")
+            if [ -z "$CERTS" ]; then
+              CERTS=$(app-store-connect certificates list --type IOS_DISTRIBUTION --json \
+                | python3 -c "import json,sys; print(' '.join(c['id'] for c in json.load(sys.stdin)))")
+            fi
+            echo "Making \"$NAME\" for $ID ($RID) with certificates: $CERTS"
+            app-store-connect profiles create "$RID" --certificate-ids $CERTS --type IOS_APP_STORE \
+              --name "$NAME" --save --profiles-dir "$DEST"
+          fi
       - name: Use the App Store signing profiles
         script: xcode-project use-profiles
       - name: Set build number
