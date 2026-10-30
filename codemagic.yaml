@@ -68,25 +68,24 @@ workflows:
           NAME="Puzzle Master App Store"
           DEST="$HOME/Library/MobileDevice/Provisioning Profiles"
           mkdir -p "$DEST"
-          # An active one already made?
-          TMP=$(mktemp -d)
-          app-store-connect profiles list --type IOS_APP_STORE --state ACTIVE --name "$NAME" --save --profiles-dir "$TMP" || true
-          if ls "$TMP"/* >/dev/null 2>&1; then
-            echo "Using the existing \"$NAME\" profile"
-            cp "$TMP"/* "$DEST/"
-          else
-            RID=$(app-store-connect bundle-ids list --bundle-id-identifier "$ID" --strict-match-identifier --platform IOS --json \
-              | python3 -c "import json,sys; print(json.load(sys.stdin)[0]['id'])")
-            CERTS=$(app-store-connect certificates list --type DISTRIBUTION --json 2>/dev/null \
+          # A fresh profile every build, so it always has the App ID's current
+          # capabilities (Game Center, Sign in with Apple). Old ones go first.
+          for OLD in $(app-store-connect profiles list --type IOS_APP_STORE --name "$NAME" --json \
+              | python3 -c "import json,sys; print(' '.join(p['id'] for p in json.load(sys.stdin)))"); do
+            echo "Removing old profile $OLD"
+            app-store-connect profiles delete "$OLD" || true
+          done
+          RID=$(app-store-connect bundle-ids list --bundle-id-identifier "$ID" --strict-match-identifier --platform IOS --json \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)[0]['id'])")
+          CERTS=$(app-store-connect certificates list --type DISTRIBUTION --json 2>/dev/null \
+            | python3 -c "import json,sys; print(' '.join(c['id'] for c in json.load(sys.stdin)))")
+          if [ -z "$CERTS" ]; then
+            CERTS=$(app-store-connect certificates list --type IOS_DISTRIBUTION --json \
               | python3 -c "import json,sys; print(' '.join(c['id'] for c in json.load(sys.stdin)))")
-            if [ -z "$CERTS" ]; then
-              CERTS=$(app-store-connect certificates list --type IOS_DISTRIBUTION --json \
-                | python3 -c "import json,sys; print(' '.join(c['id'] for c in json.load(sys.stdin)))")
-            fi
-            echo "Making \"$NAME\" for $ID ($RID) with certificates: $CERTS"
-            app-store-connect profiles create "$RID" --certificate-ids $CERTS --type IOS_APP_STORE \
-              --name "$NAME" --save --profiles-dir "$DEST"
           fi
+          echo "Making \"$NAME\" for $ID ($RID) with certificates: $CERTS"
+          app-store-connect profiles create "$RID" --certificate-ids $CERTS --type IOS_APP_STORE \
+            --name "$NAME" --save --profiles-dir "$DEST"
       - name: Use the App Store signing profiles
         script: xcode-project use-profiles
       - name: Set build number
@@ -159,7 +158,7 @@ workflows:
           else
             echo "App ID $ID is already registered ($RID)"
           fi
-          app-store-connect bundle-ids enable-capabilities "$RID" --capability "Game Center"
+          app-store-connect bundle-ids enable-capabilities "$RID" --capability "Game Center" "Sign In with Apple"
           echo "Capabilities now:"
           app-store-connect bundle-ids capabilities "$RID" || true
 
