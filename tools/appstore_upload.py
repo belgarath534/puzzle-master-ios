@@ -132,6 +132,10 @@ def main():
         sys.exit(1)
     vid = version["id"]
     print("Version", version["attributes"]["versionString"], vid)
+    if listing.get("copyright"):
+        if call("PATCH", f"/appStoreVersions/{vid}", {"data": {"type": "appStoreVersions", "id": vid,
+                                                             "attributes": {"copyright": listing["copyright"]}}}) is not None:
+            print("✓ Copyright:", listing["copyright"])
     locs = {l["attributes"]["locale"]: l for l in call("GET", f"/appStoreVersions/{vid}/appStoreVersionLocalizations")["data"]}
     for locale, text in listing["localizations"].items():
         attrs = {k: text[k] for k in ("description", "keywords", "promotionalText")}
