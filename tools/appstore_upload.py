@@ -30,7 +30,36 @@ def token():
         sys.exit(1)
     now = int(time.time())
     return jwt.encode({"iss": os.environ[need[0]], "iat": now, "exp": now + 1100, "aud": "appstoreconnect-v1"},
-                      os.environ[need[2]], algorithm="ES256", headers={"kid": os.environ[need[1]], "typ": "JWT"})
+                      private_key(os.environ[need[2]]), algorithm="ES256", headers={"kid": os.environ[need[1]], "typ": "JWT"})
+
+
+def private_key(raw):
+    """The .p8 key as PEM, however it was handed over: PEM, PEM with escaped
+    line breaks, base64 of the PEM, a bare key body, or a path to the file."""
+    import base64
+    k = raw.strip().strip('"')
+    if k.startswith("@file:"):
+        k = k[6:]
+    if os.path.isfile(k):
+        k = Path(k).read_text()
+    k = k.replace("\\n", "\n").replace("\r", "")
+    if "BEGIN" not in k:
+        try:
+            decoded = base64.b64decode(k, validate=False).decode("utf-8", "ignore")
+            if "BEGIN" in decoded:
+                k = decoded
+        except Exception:
+            pass
+    if "BEGIN" not in k:
+        body = "".join(k.split())
+        k = "-----BEGIN PRIVATE KEY-----\n" + "\n".join(body[i:i + 64] for i in range(0, len(body), 64)) + "\n-----END PRIVATE KEY-----\n"
+    elif "\n" not in k.strip():
+        # One line with the markers in it: put the line breaks back.
+        head, rest = k.split("-----", 2)[1], k.split("-----", 2)[2]
+        body, tail = rest.rsplit("-----END", 1)
+        k = f"-----{head}-----\n" + "\n".join("".join(body.split())[i:i + 64] for i in range(0, len("".join(body.split())), 64)) + "\n-----END" + tail + "\n"
+    print(f"Key: {len(raw)} chars in, PEM with {k.count(chr(10))} lines")
+    return k
 
 
 TOKEN = None
