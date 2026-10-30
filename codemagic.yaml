@@ -188,3 +188,16 @@ workflows:
         script: |
           pip3 install --quiet --break-system-packages pyjwt cryptography requests 2>/dev/null || pip3 install --quiet pyjwt cryptography requests
           python3 tools/asc_review_prep.py
+
+  submit-for-review:
+    # Submits the prepared version (and its achievements) for App Review.
+    name: Submit for review
+    max_build_duration: 15
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Accessible Backrooms
+    scripts:
+      - name: Submit for review
+        script: |
+          pip3 install --quiet --break-system-packages pyjwt cryptography requests 2>/dev/null || pip3 install --quiet pyjwt cryptography requests
+          python3 tools/asc_submit.py
