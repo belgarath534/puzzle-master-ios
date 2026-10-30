@@ -100,6 +100,6 @@ workflows:
           else
             echo "App ID $ID is already registered ($RID)"
           fi
-          app-store-connect bundle-ids enable-capabilities "$RID" --capability GAME_CENTER || echo "Game Center was already on"
+          app-store-connect bundle-ids enable-capabilities "$RID" --capability "Game Center"
           echo "Capabilities now:"
           app-store-connect bundle-ids capabilities "$RID" || true
