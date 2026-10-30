@@ -173,6 +173,43 @@ def main():
         "primarySubcategoryTwo": rel("appCategories", c["primarySubTwo"])}}})
     print("✓ Category", c)
 
+    # Free, in every country.
+    if listing.get("price") == "free":
+        points = call("GET", f"/apps/{app_id}/appPricePoints?filter[territory]=USA&limit=200")
+        free = next((p for p in (points or {"data": []})["data"] if float(p["attributes"].get("customerPrice") or 0) == 0), None)
+        if free:
+            made = call("POST", "/appPriceSchedules", {
+                "data": {"type": "appPriceSchedules", "relationships": {
+                    "app": rel("apps", app_id),
+                    "baseTerritory": rel("territories", "USA"),
+                    "manualPrices": {"data": [{"type": "appPrices", "id": "${price0}"}]}}},
+                "included": [{"type": "appPrices", "id": "${price0}", "attributes": {"startDate": None},
+                              "relationships": {"appPricePoint": rel("appPricePoints", free["id"])}}]})
+            if made is not None:
+                print("✓ Price: Free")
+        else:
+            print("  ✗ No free price point found")
+        have = call("GET", f"/apps/{app_id}/appAvailabilityV2", ok=(200,), quiet=True)
+        if have and have.get("data"):
+            print("✓ Availability already set")
+        else:
+            terrs, url = [], "/territories?limit=200"
+            while url:
+                page = call("GET", url)
+                if not page:
+                    break
+                terrs += [t["id"] for t in page["data"]]
+                url = page.get("links", {}).get("next")
+            inc = [{"type": "territoryAvailabilities", "id": f"${{{t}}}", "attributes": {"available": True},
+                    "relationships": {"territory": rel("territories", t)}} for t in terrs]
+            made = call("POST", "https://api.appstoreconnect.apple.com/v2/appAvailabilities", {
+                "data": {"type": "appAvailabilities", "attributes": {"availableInNewTerritories": True},
+                         "relationships": {"app": rel("apps", app_id),
+                                           "territoryAvailabilities": {"data": [{"type": "territoryAvailabilities", "id": i["id"]} for i in inc]}}},
+                "included": inc})
+            if made is not None:
+                print(f"✓ Available in {len(terrs)} countries and regions")
+
     # Age rating questionnaire, from what the riddles actually contain.
     ar = listing.get("ageRating")
     decl = call("GET", f"/appInfos/{info['id']}/ageRatingDeclaration") if ar else None

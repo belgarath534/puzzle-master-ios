@@ -62,7 +62,10 @@
       "userGeneratedContent",
       "advertising",
       "healthOrWellnessTopics",
-      "seventeenPlus"
+      "seventeenPlus",
+      "socialMedia",
+      "socialMediaAgeRestricted"
     ]
-  }
+  },
+  "price": "free"
 }
