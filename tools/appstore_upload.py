@@ -123,6 +123,20 @@ def main():
     app_id = apps["data"][0]["id"]
     print("App", app_id)
 
+    # Sign in with Apple on the App ID, as its own primary app (the command
+    # line tool can't send that setting).
+    bid = call("GET", f"/bundleIds?filter[identifier]={BUNDLE_ID}&filter[platform]=IOS&include=bundleIdCapabilities")
+    if bid and bid["data"]:
+        b = next(d for d in bid["data"] if d["attributes"]["identifier"] == BUNDLE_ID)
+        caps = {c["attributes"]["capabilityType"] for c in bid.get("included", []) if c["type"] == "bundleIdCapabilities"}
+        if "APPLE_ID_AUTH" in caps:
+            print("✓ Sign in with Apple already on for", BUNDLE_ID)
+        elif call("POST", "/bundleIdCapabilities", {"data": {"type": "bundleIdCapabilities",
+                "attributes": {"capabilityType": "APPLE_ID_AUTH", "settings": [
+                    {"key": "APPLE_ID_AUTH_APP_CONSENT", "options": [{"key": "PRIMARY_APP_CONSENT"}]}]},
+                "relationships": {"bundleId": rel("bundleIds", b["id"])}}}) is not None:
+            print("✓ Sign in with Apple turned on for", BUNDLE_ID)
+
     # The version being prepared, and its text in each language.
     versions = call("GET", f"/apps/{app_id}/appStoreVersions?filter[platform]=IOS&limit=20")["data"]
     version = next((v for v in versions if (v["attributes"].get("appStoreState") or v["attributes"].get("appVersionState")) in EDITABLE
