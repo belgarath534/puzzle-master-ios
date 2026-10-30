@@ -248,10 +248,17 @@ def main():
                 if not made:
                     continue
                 s = made["data"]
-            for old in call("GET", f"/appScreenshotSets/{s['id']}/appScreenshots")["data"]:
+            olds = call("GET", f"/appScreenshotSets/{s['id']}/appScreenshots")["data"]
+            states = [(o["attributes"].get("fileName"), (o["attributes"].get("assetDeliveryState") or {}).get("state")) for o in olds]
+            failed = [n for n, st in states if st == "FAILED"]
+            if sorted(n for n, _ in states) == [f.name for f in files] and not failed:
+                # Already there: re-uploading would only make Apple process them again.
+                print(f"✓ Screenshots {display}: already uploaded —", ", ".join(f"{n}: {st}" for n, st in states))
+                continue
+            for old in olds:
                 call("DELETE", f"/appScreenshots/{old['id']}")
             done = sum(asset("appScreenshots", "appScreenshotSet", "appScreenshotSets", s["id"], f) for f in files)
-            print(f"✓ Screenshots {display}: {done} of {len(files)}")
+            print(f"✓ Screenshots {display}: {done} of {len(files)} uploaded" + (f" (replacing failed: {failed})" if failed else ""))
 
     # Game Center: the app's details, then each achievement in three languages with its image.
     gcd = call("GET", f"/apps/{app_id}/gameCenterDetail", ok=(200,), quiet=True)
