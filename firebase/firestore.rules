@@ -1,0 +1,49 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() { return request.auth != null; }
+    function isMe(uid) { return signedIn() && request.auth.uid == uid; }
+
+    // ── USER SAVE DATA (progress, coins, achievements, settings) ──
+    // Only the signed-in owner can read or write their own document,
+    // and delete it (Delete my account).
+    match /users/{uid} {
+      allow read, write: if isMe(uid);
+    }
+
+    // ── LEADERBOARD (weekly, global + per-category) ──
+    // Anyone can read rankings (no sign-in required to view).
+    // Only the signed-in owner can write their own entry, and only
+    // with a valid shape (name + non-negative numeric score).
+    match /leaderboard/{weekDoc}/entries/{uid} {
+      allow read: if true;
+      allow create, update: if isMe(uid)
+                   && request.resource.data.keys().hasAll(['name', 'score'])
+                   && request.resource.data.score is number
+                   && request.resource.data.score >= 0;
+      allow delete: if isMe(uid);
+    }
+
+    // ── BLITZ LEADERBOARD (weekly, one entry per player: "<week>_<uid>") ──
+    match /blitzLeaderboard/{entry} {
+      allow read: if true;
+      allow create, update: if signedIn()
+                   && entry.matches('.*_' + request.auth.uid)
+                   && request.resource.data.uid == request.auth.uid
+                   && request.resource.data.score is number
+                   && request.resource.data.score >= 0;
+      allow delete: if signedIn() && resource.data.uid == request.auth.uid;
+    }
+
+    // ── NOTIFICATION TOKENS (one per player) ──
+    match /fcmTokens/{uid} {
+      allow read, write: if isMe(uid);
+    }
+
+    // ── DEFAULT: deny everything else ──
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
