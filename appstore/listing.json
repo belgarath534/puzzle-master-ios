@@ -27,5 +27,42 @@
   "urls": {
     "privacyPolicy": "https://belgarath534.github.io/puzzle-master-adds/privacy.html",
     "support": "https://belgarath534.github.io/puzzle-master-adds/support.html"
+  },
+  "ageRating": {
+    "_why": "Riddles mention murder, suicide, guns, ghosts and zombies, wine and beer, and wars, all in text and mild. No ads, chat, gambling, web access or user content.",
+    "mild": [
+      "violenceRealistic",
+      "horrorOrFearThemes",
+      "matureOrSuggestiveThemes",
+      "gunsOrOtherWeapons",
+      "alcoholTobaccoOrDrugUseOrReferences"
+    ],
+    "enums": [
+      "alcoholTobaccoOrDrugUseOrReferences",
+      "contests",
+      "gamblingSimulated",
+      "gunsOrOtherWeapons",
+      "medicalOrTreatmentInformation",
+      "profanityOrCrudeHumor",
+      "sexualContentGraphicAndNudity",
+      "sexualContentOrNudity",
+      "horrorOrFearThemes",
+      "matureOrSuggestiveThemes",
+      "violenceCartoonOrFantasy",
+      "violenceRealistic",
+      "violenceRealisticProlongedGraphicOrSadistic"
+    ],
+    "booleans": [
+      "gambling",
+      "unrestrictedWebAccess",
+      "lootBox",
+      "messagingAndChat",
+      "parentalControls",
+      "ageAssurance",
+      "userGeneratedContent",
+      "advertising",
+      "healthOrWellnessTopics",
+      "seventeenPlus"
+    ]
   }
 }

@@ -173,6 +173,25 @@ def main():
         "primarySubcategoryTwo": rel("appCategories", c["primarySubTwo"])}}})
     print("✓ Category", c)
 
+    # Age rating questionnaire, from what the riddles actually contain.
+    ar = listing.get("ageRating")
+    decl = call("GET", f"/appInfos/{info['id']}/ageRatingDeclaration") if ar else None
+    if decl and decl.get("data"):
+        current = decl["data"]["attributes"]
+        attrs, unknown = {}, []
+        for k, v in current.items():
+            if k in ar["enums"]:
+                attrs[k] = "INFREQUENT_OR_MILD" if k in ar["mild"] else "NONE"
+            elif k in ar["booleans"]:
+                attrs[k] = False
+            elif v is None and k not in ("kidsAgeBand", "ageRatingOverride", "koreaAgeRatingOverride", "ageRatingOverrideV2"):
+                unknown.append(k)
+        if call("PATCH", f"/ageRatingDeclarations/{decl['data']['id']}",
+                {"data": {"type": "ageRatingDeclarations", "id": decl["data"]["id"], "attributes": attrs}}) is not None:
+            print("✓ Age rating:", ", ".join(f"{k}={v}" for k, v in sorted(attrs.items())))
+        if unknown:
+            print("  Questions still unanswered (answer them on the website):", ", ".join(unknown))
+
     # Screenshots, on the primary language (the others use them too).
     en = locs.get("en-US")
     if en:
