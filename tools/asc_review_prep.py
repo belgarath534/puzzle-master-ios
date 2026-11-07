@@ -3,7 +3,7 @@
 how Game Center is connected to that version (achievements for review)."""
 import json, sys
 sys.path.insert(0, __import__("os").path.dirname(__file__))
-from appstore_upload import call, rel, BUNDLE_ID, EDITABLE
+from appstore_upload import call, rel, BUNDLE_ID, EDITABLE, errors
 
 app_id = call("GET", f"/apps?filter[bundleId]={BUNDLE_ID}")["data"][0]["id"]
 versions = call("GET", f"/apps/{app_id}/appStoreVersions?filter[platform]=IOS&limit=20")["data"]
@@ -22,6 +22,8 @@ if ok:
     b = ok[0]
     r = call("PATCH", f"/appStoreVersions/{vid}/relationships/build", {"data": {"type": "builds", "id": b["id"]}})
     print(("✓ Build " + b["attributes"]["version"] + " is on the version") if r is not None else "✗ Couldn't set the build")
+else:
+    print("✗ No build has finished processing yet")
 
 # Game Center, as Apple has it.
 def show(label, path):
@@ -36,3 +38,7 @@ if gcd and gcd.get("data"):
     print("\n== Game Center detail relationships:", list(gcd["data"].get("relationships", {}).keys()))
     show("achievement releases", f"/gameCenterDetails/{gid}/achievementReleases?limit=3")
     show("one achievement", f"/gameCenterDetails/{gid}/gameCenterAchievements?limit=1")
+
+# Fail the Codemagic run if no processed build could be put on the version,
+# so it's obvious when to wait for Apple and run this again.
+sys.exit(1 if (errors or not ok) else 0)
