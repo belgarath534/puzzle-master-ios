@@ -36,3 +36,168 @@ workflows:
     artifacts:
       - build/ios/ipa/*.ipa
       - /tmp/xcodebuild_logs/*.log
+
+  puzzle-master-appstore:
+    name: Puzzle Master App Store
+    max_build_duration: 60
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Accessible Backrooms
+    environment:
+      ios_signing:
+        # Codemagic only installs a certificate alongside a profile, so this
+        # names one already saved in Codemagic (it isn't used for this app).
+        # Puzzle Master's own App Store profile is made or fetched from Apple
+        # in the step below.
+        provisioning_profiles:
+          - Dungeon Descent Live Activity App Store
+        certificates:
+          - Accessible Backrooms Distribution
+      node: 22
+      xcode: latest
+      cocoapods: default
+    scripts:
+      - name: Install npm dependencies
+        script: npm install --legacy-peer-deps
+      - name: Capacitor sync
+        script: npx cap sync ios
+      - name: Get the App Store profile from Apple
+        script: |
+          set -e
+          ID=com.puzzle.master
+          NAME="Puzzle Master App Store"
+          DEST="$HOME/Library/MobileDevice/Provisioning Profiles"
+          mkdir -p "$DEST"
+          # A fresh profile every build, so it always has the App ID's current
+          # capabilities (Game Center, Sign in with Apple). Old ones go first.
+          for OLD in $(app-store-connect profiles list --type IOS_APP_STORE --name "$NAME" --json \
+              | python3 -c "import json,sys; print(' '.join(p['id'] for p in json.load(sys.stdin)))"); do
+            echo "Removing old profile $OLD"
+            app-store-connect profiles delete "$OLD" || true
+          done
+          RID=$(app-store-connect bundle-ids list --bundle-id-identifier "$ID" --strict-match-identifier --platform IOS --json \
+            | python3 -c "import json,sys; print(json.load(sys.stdin)[0]['id'])")
+          CERTS=$(app-store-connect certificates list --type DISTRIBUTION --json 2>/dev/null \
+            | python3 -c "import json,sys; print(' '.join(c['id'] for c in json.load(sys.stdin)))")
+          if [ -z "$CERTS" ]; then
+            CERTS=$(app-store-connect certificates list --type IOS_DISTRIBUTION --json \
+              | python3 -c "import json,sys; print(' '.join(c['id'] for c in json.load(sys.stdin)))")
+          fi
+          echo "Making \"$NAME\" for $ID ($RID) with certificates: $CERTS"
+          app-store-connect profiles create "$RID" --certificate-ids $CERTS --type IOS_APP_STORE \
+            --name "$NAME" --save --profiles-dir "$DEST"
+      - name: Use the App Store signing profiles
+        script: xcode-project use-profiles
+      - name: Set build number
+        script: |
+          sed -i '' "s/CURRENT_PROJECT_VERSION = [0-9]*;/CURRENT_PROJECT_VERSION = $BUILD_NUMBER;/" ios/App/App.xcodeproj/project.pbxproj
+          grep -m1 CURRENT_PROJECT_VERSION ios/App/App.xcodeproj/project.pbxproj
+      - name: Build signed IPA
+        script: |
+          # Plain xcodebuild, like the unsigned workflow: xcode-project
+          # build-ipa couldn't read this project's settings.
+          set -eo pipefail
+          ARCHIVE="$CM_BUILD_DIR/App.xcarchive"
+          xcodebuild \
+            -project ios/App/App.xcodeproj \
+            -scheme App \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -archivePath "$ARCHIVE" \
+            archive 2>&1 | tee /tmp/archive.log | grep -E "error:|warning: .*sign|ARCHIVE (SUCCEEDED|FAILED)" || true
+          grep -q "ARCHIVE SUCCEEDED" /tmp/archive.log || { tail -80 /tmp/archive.log; exit 1; }
+          cat > /tmp/export.plist <<'PLIST'
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>method</key><string>app-store-connect</string>
+            <key>teamID</key><string>ZPD555RW3A</string>
+            <key>signingStyle</key><string>manual</string>
+            <key>signingCertificate</key><string>Apple Distribution</string>
+            <key>provisioningProfiles</key>
+            <dict><key>com.puzzle.master</key><string>Puzzle Master App Store</string></dict>
+            <key>uploadSymbols</key><true/>
+          </dict>
+          </plist>
+          PLIST
+          mkdir -p build/ios/ipa
+          xcodebuild -exportArchive \
+            -archivePath "$ARCHIVE" \
+            -exportPath build/ios/ipa \
+            -exportOptionsPlist /tmp/export.plist 2>&1 | tail -30
+          ls -la build/ios/ipa/*.ipa
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - /tmp/xcodebuild_logs/*.log
+    publishing:
+      app_store_connect:
+        auth: integration
+        # Internal testers get every build; true asks for external beta review.
+        submit_to_testflight: false
+
+  register-app-id:
+    # One-off: registers com.puzzle.master with Apple (App ID with Game
+    # Center) through the App Store Connect key. Safe to run again.
+    name: Register Puzzle Master App ID
+    max_build_duration: 15
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Accessible Backrooms
+    scripts:
+      - name: Register the App ID with Apple
+        script: |
+          set -e
+          ID=com.puzzle.master
+          FOUND=$(app-store-connect bundle-ids list --bundle-id-identifier "$ID" --strict-match-identifier --platform IOS --json)
+          RID=$(echo "$FOUND" | python3 -c "import json,sys; d=json.load(sys.stdin); print(d[0]['id'] if d else '')")
+          if [ -z "$RID" ]; then
+            echo "Creating App ID $ID"
+            CREATED=$(app-store-connect bundle-ids create "$ID" --name "Puzzle Master" --platform IOS --json)
+            RID=$(echo "$CREATED" | python3 -c "import json,sys; print(json.load(sys.stdin)['id'])")
+          else
+            echo "App ID $ID is already registered ($RID)"
+          fi
+          app-store-connect bundle-ids enable-capabilities "$RID" --capability "Game Center"
+          echo "Capabilities now:"
+          app-store-connect bundle-ids capabilities "$RID" || true
+
+  appstore-listing:
+    # Puts the listing text, category, screenshots and Game Center
+    # achievements on App Store Connect (tools/appstore_upload.py).
+    name: Upload App Store listing
+    max_build_duration: 30
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Accessible Backrooms
+    scripts:
+      - name: Upload the listing
+        script: |
+          pip3 install --quiet --break-system-packages pyjwt cryptography requests 2>/dev/null || pip3 install --quiet pyjwt cryptography requests
+          python3 tools/appstore_upload.py
+
+  review-prep:
+    # Puts the newest build on the version and shows Game Center's setup.
+    name: Prepare for review
+    max_build_duration: 15
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Accessible Backrooms
+    scripts:
+      - name: Prepare for review
+        script: |
+          pip3 install --quiet --break-system-packages pyjwt cryptography requests 2>/dev/null || pip3 install --quiet pyjwt cryptography requests
+          python3 tools/asc_review_prep.py
+
+  submit-for-review:
+    # Submits the prepared version (and its achievements) for App Review.
+    name: Submit for review
+    max_build_duration: 15
+    instance_type: mac_mini_m2
+    integrations:
+      app_store_connect: Accessible Backrooms
+    scripts:
+      - name: Submit for review
+        script: |
+          pip3 install --quiet --break-system-packages pyjwt cryptography requests 2>/dev/null || pip3 install --quiet pyjwt cryptography requests
+          python3 tools/asc_submit.py
