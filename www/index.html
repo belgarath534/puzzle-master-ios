@@ -533,11 +533,12 @@ body.halloween-active #mainMenu h1::after { content: " 🎃"; }
     <span style="color:#aaa;">Moves: <span id="mmMoves" style="color:#f0c040;font-weight:bold;">0</span></span>
     <span style="color:#aaa;">Time: <span id="mmTimer" style="color:#81c784;font-weight:bold;">0s</span></span>
   </div>
-  <div id="mmStatus" aria-live="assertive" style="min-height:24px;color:#fff;font-size:0.9rem;margin-bottom:10px;"></div>
-  <div id="mmGrid" role="grid" aria-label="Memory match card grid" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:340px;margin:0 auto 16px;"></div>
+  <div id="mmStatus" aria-hidden="true" style="min-height:24px;color:#fff;font-size:0.9rem;margin-bottom:10px;"></div>
+  <p id="mmHelp" class="sr-only">Cards are laid out in rows of 4. Double tap a face-down card to flip it, then flip a second card to find its match. Matched cards stay face up.</p>
+  <div id="mmGrid" role="group" aria-label="Memory match cards" aria-describedby="mmHelp" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:340px;margin:0 auto 16px;"></div>
   <div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px;">
-    <button onclick="mmSetSize(8)" id="mm8btn" style="padding:6px 14px;border-radius:8px;border:2px solid #4fc3f7;background:#4fc3f7;color:#000;cursor:pointer;font-size:0.8rem;">4×4 (8 pairs)</button>
-    <button onclick="mmSetSize(6)" id="mm6btn" style="padding:6px 14px;border-radius:8px;border:2px solid #4fc3f7;background:transparent;color:#4fc3f7;cursor:pointer;font-size:0.8rem;">3×4 (6 pairs)</button>
+    <button onclick="mmSetSize(8)" id="mm8btn" aria-pressed="true" aria-label="Large board: 8 pairs, 4 rows of 4" style="padding:6px 14px;border-radius:8px;border:2px solid #4fc3f7;background:#4fc3f7;color:#000;cursor:pointer;font-size:0.8rem;">4×4 (8 pairs)</button>
+    <button onclick="mmSetSize(6)" id="mm6btn" aria-pressed="false" aria-label="Small board: 6 pairs, 3 rows of 4" style="padding:6px 14px;border-radius:8px;border:2px solid #4fc3f7;background:transparent;color:#4fc3f7;cursor:pointer;font-size:0.8rem;">3×4 (6 pairs)</button>
   </div>
   <div style="max-width:280px;margin:0 auto;display:flex;gap:8px;">
     <button onclick="mmNewGame()" style="flex:1;padding:10px;background:#333;color:#fff;border:none;border-radius:10px;cursor:pointer;">🔄 New Game</button>
@@ -4299,14 +4300,40 @@ var _mm = { cards:[], flipped:[], matched:0, total:8, moves:0, timer:null, secon
 
 var MM_EMOJIS = ["🐶","🐱","🐭","🐹","🐰","🦊","🐻","🐼","🐨","🐯","🦁","🐸",
   "🐙","🦋","🐝","🌸","🌈","⭐","🍕","🎸","🚀","💎","🏆","🎯"];
+// Spoken names so VoiceOver reads a clear word instead of an emoji description
+var MM_NAMES = {"🐶":"Dog","🐱":"Cat","🐭":"Mouse","🐹":"Hamster","🐰":"Rabbit","🦊":"Fox",
+  "🐻":"Bear","🐼":"Panda","🐨":"Koala","🐯":"Tiger","🦁":"Lion","🐸":"Frog","🐙":"Octopus",
+  "🦋":"Butterfly","🐝":"Bee","🌸":"Flower","🌈":"Rainbow","⭐":"Star","🍕":"Pizza",
+  "🎸":"Guitar","🚀":"Rocket","💎":"Diamond","🏆":"Trophy","🎯":"Target"};
+var MM_COLS = 4;
+function mmName(e){ return MM_NAMES[e] || e; }
+function mmPos(i){ return "row "+(Math.floor(i/MM_COLS)+1)+", column "+(i%MM_COLS+1); }
+function mmLabel(i){
+  var c=_mm.cards[i];
+  if (c.matched) return mmName(c.emoji)+", matched, "+mmPos(i);
+  if (c.flipped) return mmName(c.emoji)+", face up, "+mmPos(i);
+  return "Face down card, "+mmPos(i);
+}
+function mmRender(i){
+  var c=_mm.cards[i], el=$("mmCard"+i); if(!el) return;
+  var face=el.firstChild;
+  face.textContent = (c.flipped||c.matched) ? c.emoji : "❓";
+  el.style.background = c.matched ? "#1a3a1a" : c.flipped ? "#0a2a4a" : "#1a1a2e";
+  el.style.borderColor = c.matched ? "#81c784" : c.flipped ? "#4fc3f7" : "#333";
+  el.setAttribute("aria-label", mmLabel(i));
+  el.setAttribute("aria-disabled", c.matched ? "true" : "false");
+}
 
 function mmSetSize(n) {
   _mm.total = n;
   $("mm8btn").style.background = n===8 ? "#4fc3f7" : "transparent";
   $("mm8btn").style.color = n===8 ? "#000" : "#4fc3f7";
+  $("mm8btn").setAttribute("aria-pressed", n===8 ? "true" : "false");
   $("mm6btn").style.background = n===6 ? "#4fc3f7" : "transparent";
   $("mm6btn").style.color = n===6 ? "#000" : "#4fc3f7";
+  $("mm6btn").setAttribute("aria-pressed", n===6 ? "true" : "false");
   mmNewGame();
+  srSay("New game, "+n+" pairs, "+(n*2/MM_COLS)+" rows of "+MM_COLS+" cards.");
 }
 
 function mmNewGame() {
@@ -4319,23 +4346,25 @@ function mmNewGame() {
   $("mmStatus").textContent="";
 
   var pool = MM_EMOJIS.slice(0,_mm.total);
-  var deck = pool.concat(pool).sort(function(){ return Math.random()-0.5; });
+  var deck = pool.concat(pool);
+  for (var k=deck.length-1;k>0;k--){ var j=Math.floor(Math.random()*(k+1)); var t=deck[k]; deck[k]=deck[j]; deck[j]=t; }
   _mm.cards = deck.map(function(e,i){ return {id:i,emoji:e,flipped:false,matched:false}; });
 
-  var cols = _mm.total===8 ? 4 : 4;
   var grid = $("mmGrid");
-  grid.style.gridTemplateColumns = "repeat("+cols+",1fr)";
+  grid.style.gridTemplateColumns = "repeat("+MM_COLS+",1fr)";
   grid.innerHTML="";
   _mm.cards.forEach(function(c) {
     var btn = document.createElement("button");
-    btn.setAttribute("role","gridcell");
-    btn.setAttribute("aria-label","Card "+(c.id+1)+", face down");
-    btn.setAttribute("aria-pressed","false");
-    btn.style.cssText="height:70px;border-radius:10px;border:2px solid #333;background:#1a1a2e;font-size:1.8rem;cursor:pointer;transition:all 0.2s;";
-    btn.textContent="❓";
-    btn.onclick = function(){ mmFlip(c.id); };
+    btn.type="button";
     btn.id="mmCard"+c.id;
+    btn.style.cssText="height:70px;border-radius:10px;border:2px solid #333;background:#1a1a2e;font-size:1.8rem;cursor:pointer;transition:all 0.2s;";
+    // Visual emoji is hidden from VoiceOver; the button's aria-label carries the meaning
+    var face=document.createElement("span");
+    face.setAttribute("aria-hidden","true");
+    btn.appendChild(face);
+    btn.onclick = function(){ mmFlip(c.id); };
     grid.appendChild(btn);
+    mmRender(c.id);
   });
 
   _mm.timer = setInterval(function(){
@@ -4345,48 +4374,46 @@ function mmNewGame() {
 }
 
 function mmFlip(idx) {
-  if (_mm.locked) return;
   var c = _mm.cards[idx];
-  if (c.flipped || c.matched) return;
+  if (c.matched) { srSay(mmName(c.emoji)+", already matched."); return; }
+  if (c.flipped) { srSay(mmName(c.emoji)+", already face up."); return; }
+  if (_mm.locked) return;
   c.flipped=true;
-  var btn=$("mmCard"+idx);
-  btn.textContent=c.emoji;
-  btn.style.background="#0a2a4a";
-  btn.style.borderColor="#4fc3f7";
-  btn.setAttribute("aria-label","Card "+(idx+1)+", "+c.emoji);
-  btn.setAttribute("aria-pressed","true");
+  mmRender(idx);
   _mm.flipped.push(idx);
 
-  if (_mm.flipped.length===2) {
-    _mm.locked=true; _mm.moves++;
-    $("mmMoves").textContent=_mm.moves;
-    var a=_mm.cards[_mm.flipped[0]], b=_mm.cards[_mm.flipped[1]];
-    if (a.emoji===b.emoji) {
-      a.matched=b.matched=true;
-      [$("mmCard"+_mm.flipped[0]),$("mmCard"+_mm.flipped[1])].forEach(function(el){
-        el.style.background="#1a3a1a"; el.style.borderColor="#81c784";
-      });
-      _mm.matched++; $("mmPairsFound").textContent=_mm.matched;
-      $("mmStatus").textContent="✅ Match! "+c.emoji;
-      _mm.flipped=[]; _mm.locked=false;
-      if (_mm.matched===_mm.total) {
-        clearInterval(_mm.timer);
-        $("mmStatus").textContent="🎉 All pairs found in "+_mm.moves+" moves and "+_mm.seconds+"s!";
-        addCoins(Math.max(3, 20-Math.floor(_mm.moves/2)));
-      }
+  if (_mm.flipped.length===1) {
+    srSay(mmName(c.emoji));
+    return;
+  }
+
+  _mm.locked=true; _mm.moves++;
+  $("mmMoves").textContent=_mm.moves;
+  var i1=_mm.flipped[0], i2=_mm.flipped[1];
+  var a=_mm.cards[i1], b=_mm.cards[i2];
+  if (a.emoji===b.emoji) {
+    a.matched=b.matched=true;
+    mmRender(i1); mmRender(i2);
+    _mm.matched++; $("mmPairsFound").textContent=_mm.matched;
+    _mm.flipped=[]; _mm.locked=false;
+    if (_mm.matched===_mm.total) {
+      clearInterval(_mm.timer);
+      var msg="🎉 All pairs found in "+_mm.moves+" moves and "+_mm.seconds+"s!";
+      $("mmStatus").textContent=msg;
+      srSay(mmName(c.emoji)+". Match! All "+_mm.total+" pairs found in "+_mm.moves+" moves and "+_mm.seconds+" seconds!", true);
+      addCoins(Math.max(3, 20-Math.floor(_mm.moves/2)));
     } else {
-      $("mmStatus").textContent="❌ No match";
-      setTimeout(function(){
-        [_mm.flipped[0],_mm.flipped[1]].forEach(function(i){
-          _mm.cards[i].flipped=false;
-          var el=$("mmCard"+i);
-          el.textContent="❓"; el.style.background="#1a1a2e"; el.style.borderColor="#333";
-          el.setAttribute("aria-label","Card "+(i+1)+", face down");
-          el.setAttribute("aria-pressed","false");
-        });
-        _mm.flipped=[]; _mm.locked=false; $("mmStatus").textContent="";
-      },900);
+      $("mmStatus").textContent="✅ Match! "+c.emoji;
+      srSay(mmName(c.emoji)+". Match! "+_mm.matched+" of "+_mm.total+" pairs found.", true);
     }
+  } else {
+    $("mmStatus").textContent="❌ No match";
+    srSay(mmName(b.emoji)+". No match. "+mmName(a.emoji)+" was at "+mmPos(i1)+". Cards flip back.", true);
+    // Give VoiceOver users time to hear what both cards were before they hide
+    setTimeout(function(){
+      [i1,i2].forEach(function(i){ _mm.cards[i].flipped=false; mmRender(i); });
+      _mm.flipped=[]; _mm.locked=false; $("mmStatus").textContent="";
+    },1500);
   }
 }
 
