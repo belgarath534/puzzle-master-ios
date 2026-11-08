@@ -74,7 +74,7 @@ def call(method, path, body=None, ok=(200, 201, 204), quiet=False):
     r = requests.request(method, url, json=body, headers={"Authorization": f"Bearer {TOKEN}"}, timeout=60)
     if r.status_code not in ok:
         if not quiet:
-            msg = f"{method} {path} -> {r.status_code}: {r.text[:600]}"
+            msg = f"{method} {path} -> {r.status_code}: {r.text[:2500]}"
             print("  ✗", msg)
             errors.append(msg)
         return None

@@ -20,6 +20,13 @@ for b in builds:
 ok = [b for b in builds if b["attributes"].get("processingState") == "VALID"]
 if ok:
     b = ok[0]
+    # Export compliance: the app only uses standard HTTPS (exempt), so answer
+    # "No" if Apple is still waiting for it. Builds made after Info.plist got
+    # ITSAppUsesNonExemptEncryption=false already have this answered.
+    if b["attributes"].get("usesNonExemptEncryption") is None:
+        r = call("PATCH", f"/builds/{b['id']}", {"data": {"type": "builds", "id": b["id"],
+                 "attributes": {"usesNonExemptEncryption": False}}})
+        print("✓ Export compliance answered: no non-exempt encryption" if r is not None else "✗ Couldn't answer export compliance")
     r = call("PATCH", f"/appStoreVersions/{vid}/relationships/build", {"data": {"type": "builds", "id": b["id"]}})
     print(("✓ Build " + b["attributes"]["version"] + " is on the version") if r is not None else "✗ Couldn't set the build")
 else:
